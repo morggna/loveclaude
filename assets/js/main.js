@@ -814,6 +814,58 @@ function b32Decode(s) {
   return new Uint8Array(bytes);
 }
 
+/* ── AES-256-GCM key derived from TOTP secret (SHA-256 of raw bytes) ── */
+let _aesKey = null;
+async function deriveAesKey() {
+  if (_aesKey) return _aesKey;
+  const hash = await crypto.subtle.digest('SHA-256', b32Decode(TOTP_SECRET_B32));
+  _aesKey = await crypto.subtle.importKey('raw', hash, { name: 'AES-GCM' }, false, ['decrypt']);
+  return _aesKey;
+}
+
+function b64ToBytes(b64) {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+async function decryptGate() {
+  const gate = document.getElementById('prot-content-gate');
+  const placeholder = document.getElementById('prot-placeholder');
+  if (!gate) return;
+
+  if (gate.dataset.enc) {
+    try {
+      const key = await deriveAesKey();
+      const iv  = b64ToBytes(gate.dataset.iv);
+      const ct  = b64ToBytes(gate.dataset.enc);
+      const pt  = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+      gate.innerHTML = new TextDecoder().decode(pt);
+    } catch {
+      gate.innerHTML = '<p style="color:var(--accent-warn);padding:2rem">内容解密失败，请刷新页面重试。</p>';
+    }
+  }
+
+  placeholder?.setAttribute('hidden', '');
+  gate.removeAttribute('hidden');
+
+  /* Populate floating TOC panel from inline TOC (was kept empty for protected articles) */
+  const inlineTOC = gate.querySelector('.toc');
+  const floatPanel = document.getElementById('toc-float-panel');
+  if (inlineTOC && floatPanel && !floatPanel.querySelector('nav')) {
+    const clone = inlineTOC.querySelector('nav')?.cloneNode(true);
+    if (clone) floatPanel.appendChild(clone);
+  }
+
+  /* Re-init components that depend on article DOM being present */
+  initFloatingTOC();
+  initTocHighlight();
+  initCodeCopy();
+  initScrollReveal();
+  initReadingProgress();
+}
+
 /* ── HOTP (RFC 4226): HMAC-SHA1 truncation ──────────────────────── */
 async function computeHOTP(secretB32, counter) {
   const key = await crypto.subtle.importKey(
@@ -921,9 +973,8 @@ async function handleVerify() {
       /* Navigate to the protected article */
       window.location.href = _pendingHref;
     } else {
-      /* Inline: hide placeholder, reveal content */
-      document.getElementById('prot-placeholder')?.setAttribute('hidden', '');
-      document.getElementById('prot-content-gate')?.removeAttribute('hidden');
+      /* Inline: decrypt and reveal content */
+      decryptGate();
     }
   } else {
     /* Shake + highlight error */
@@ -1029,8 +1080,7 @@ function initProtectedModal() {
   const gate = document.getElementById('prot-content-gate');
   if (gate) {
     if (isVerified()) {
-      document.getElementById('prot-placeholder')?.setAttribute('hidden', '');
-      gate.removeAttribute('hidden');
+      decryptGate();
     } else {
       overlay.dataset.mode = 'inline';
       openModal(null);
