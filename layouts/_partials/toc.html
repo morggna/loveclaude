@@ -1,0 +1,6 @@
+{{ if and .Params.toc (gt (len .TableOfContents) 100) }}
+<nav class="toc" aria-label="目录">
+  <p class="toc-title">目录</p>
+  {{ .TableOfContents }}
+</nav>
+{{ end }}

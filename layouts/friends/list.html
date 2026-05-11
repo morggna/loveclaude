@@ -1,0 +1,61 @@
+{{ define "main" }}
+{{ $friends := where site.RegularPages "Section" "friends" }}
+
+<section class="section friends-section">
+  <div class="container">
+
+    <header class="list-hero">
+      <h1 class="list-title">{{ .Title }}</h1>
+      {{ with .Description }}
+      <p class="list-desc">{{ . }}</p>
+      {{ end }}
+    </header>
+
+    <p class="friends-tip">以下是一些我喜欢的朋友们的博客，按添加时间排列。</p>
+
+    {{ if $friends }}
+    <div class="friends-grid">
+      {{ range $friends.ByDate.Reverse }}
+      {{ $link := .Params.link | default .RelPermalink }}
+      <a href="{{ $link }}" class="friend-card" target="_blank" rel="noopener noreferrer">
+        <div class="friend-avatar">
+          {{ if .Params.avatar }}
+          <img src="{{ .Params.avatar }}" alt="{{ .Title }}" loading="lazy">
+          {{ else }}
+          <span class="friend-avatar-placeholder">{{ substr .Title 0 1 }}</span>
+          {{ end }}
+        </div>
+        <div class="friend-info">
+          <h3 class="friend-name">{{ .Title }}</h3>
+          {{ with .Description }}
+          <p class="friend-desc">{{ . }}</p>
+          {{ end }}
+          <span class="friend-url">{{ $link | replaceRE "^https?://" "" | replaceRE "/$" "" }}</span>
+        </div>
+        <svg class="friend-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      {{ end }}
+    </div>
+    {{ else }}
+    <p class="friends-empty">还没有友情链接，在 <code>content/friends/</code> 目录下新建 .md 文件即可添加。</p>
+    {{ end }}
+
+    <div class="friends-apply">
+      <h2 class="friends-apply-title">申请友链</h2>
+      <p class="friends-apply-desc">如果你也想交换友情链接，请确保：</p>
+      <ul class="friends-apply-list">
+        <li>博客内容积极向上，定期更新</li>
+        <li>已在你的博客添加本站链接</li>
+      </ul>
+      <p class="friends-apply-contact">
+        <a href="/about/" class="friends-apply-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          通过关于页面联系我
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </p>
+    </div>
+
+  </div>
+</section>
+{{ end }}

@@ -1,0 +1,33 @@
+{{ define "main" }}
+<div class="list-hero">
+  <div class="container">
+    <p class="hero-label">ARCHIVE</p>
+    <h1 class="list-title">{{ .Title }}</h1>
+    {{ with .Description }}<p class="list-description">{{ . }}</p>{{ end }}
+  </div>
+</div>
+
+<div class="container">
+  <div class="archive-wrap">
+    {{ $posts := where site.RegularPages "Type" "posts" }}
+    {{ range $posts.GroupByDate "2006" }}
+    <section class="archive-year">
+      <h2 class="archive-year-label">{{ .Key }}</h2>
+      <ul class="archive-list">
+        {{ range .Pages }}
+        <li class="archive-item">
+          <time class="archive-date" datetime="{{ .Date.Format `2006-01-02` }}">
+            {{ .Date.Format "01-02" }}
+          </time>
+          <a href="{{ .RelPermalink }}" class="archive-title">{{ .Title }}</a>
+          {{ with .Params.categories }}
+          <span class="post-category archive-cat">{{ index . 0 }}</span>
+          {{ end }}
+        </li>
+        {{ end }}
+      </ul>
+    </section>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

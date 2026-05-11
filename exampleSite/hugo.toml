@@ -1,0 +1,59 @@
+baseURL = 'https://example.org/'
+theme   = 'LoveClaude'
+defaultContentLanguage = 'zh'
+
+[pagination]
+  pagerSize = 6
+
+[params]
+  description     = "记录思考，分享发现。"
+  heroLabel       = "PERSONAL BLOG"
+  heroTitle       = '探索 <span class="gradient-text">AI 与技术</span> 的世界'
+  heroSubtitle    = "记录思考、分享发现，与你一起在数字时代寻找有意义的东西。"
+  defaultTheme    = "dark"
+  dateFormat      = "Jan 2, 2006"
+  showReadingTime = true
+  showWordCount   = true
+  telegramBotURL  = "https://t.me/yourbotname"
+  contactEmail    = "you@example.com"
+
+[languages]
+  [languages.zh]
+    locale = "zh-CN"
+    label  = "中文"
+    title  = "My Blog"
+    weight = 1
+
+    [[languages.zh.menus.main]]
+      name   = "文章"
+      url    = "/posts/"
+      weight = 10
+    [[languages.zh.menus.main]]
+      name   = "归档"
+      url    = "/archives/"
+      weight = 20
+    [[languages.zh.menus.main]]
+      name   = "标签"
+      url    = "/tags/"
+      weight = 30
+    [[languages.zh.menus.main]]
+      name   = "友链"
+      url    = "/friends/"
+      weight = 35
+    [[languages.zh.menus.main]]
+      name   = "关于"
+      url    = "/about/"
+      weight = 40
+
+[outputs]
+  home    = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+  page    = ["HTML"]
+
+[markup]
+  [markup.highlight]
+    style     = "dracula"
+    lineNos   = false
+    noClasses = true
+  [markup.goldmark.renderer]
+    unsafe = true

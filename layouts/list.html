@@ -1,0 +1,125 @@
+{{ define "main" }}
+
+{{/* ── Blog hero — two-column: title left, animated categories right ── */}}
+<div class="list-hero">
+  <div class="container">
+    <div class="list-hero-inner{{ if and (eq .Kind "section") site.Taxonomies.categories }} list-hero-inner--split{{ end }}">
+
+      <div class="list-hero-left">
+        <p class="hero-label">{{ site.Title }}</p>
+        <h1 class="list-title">{{ .Title }}</h1>
+        {{ with .Description }}<p class="list-description">{{ . }}</p>{{ end }}
+      </div>
+
+      {{ if and (eq .Kind "section") site.Taxonomies.categories -}}
+      <nav class="hero-categories list-hero-cats" aria-label="按分类浏览">
+        {{ range $name, $pages := site.Taxonomies.categories -}}
+        <a href="{{ "/categories/" | relLangURL }}{{ $name | urlize }}/" class="hero-cat-link">
+          <span>{{ $name }}</span>
+          <svg class="hero-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        {{- end }}
+      </nav>
+      {{- end }}
+
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  {{ if eq .Kind "section" -}}
+  {{/* ── Section: sidebar + posts ── */}}
+  <div class="blog-layout">
+
+    {{/* Left sidebar */}}
+    <aside class="blog-sidebar" aria-label="筛选">
+      <p class="sidebar-heading">筛选</p>
+
+      {{ if site.Taxonomies.categories -}}
+      <div class="filter-section">
+        <button class="filter-toggle open" aria-expanded="true">
+          分类
+          <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <ul class="filter-list open">
+          {{ range $name, $pages := site.Taxonomies.categories -}}
+          <li>
+            <button class="filter-option" data-category="{{ $name }}">
+              {{ $name }}<span class="filter-count">{{ len $pages }}</span>
+            </button>
+          </li>
+          {{- end }}
+        </ul>
+      </div>
+      {{- end }}
+
+      {{ if site.Taxonomies.tags -}}
+      <div class="filter-section">
+        <button class="filter-toggle" aria-expanded="false">
+          标签
+          <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <ul class="filter-list">
+          {{ range $name, $pages := site.Taxonomies.tags -}}
+          <li>
+            <button class="filter-option" data-tag="{{ $name }}">
+              {{ $name }}<span class="filter-count">{{ len $pages }}</span>
+            </button>
+          </li>
+          {{- end }}
+        </ul>
+      </div>
+      {{- end }}
+    </aside>
+
+    {{/* Right: toolbar + posts */}}
+    <div class="blog-main">
+
+      <div class="blog-toolbar">
+        <div class="search-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" id="blog-search" class="search-input" placeholder="搜索文章…" autocomplete="off">
+        </div>
+        <div class="view-toggle" role="group" aria-label="视图">
+          <button class="view-btn" data-view="grid" aria-label="网格视图">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </button>
+          <button class="view-btn" data-view="list" aria-label="列表视图">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      {{ $paginator := .Paginate .Pages }}
+      {{ if $paginator.Pages -}}
+      <div class="posts-grid posts-grid--blog" id="posts-grid">
+        {{ range $paginator.Pages -}}
+          {{- partial "post-card.html" . -}}
+        {{- end }}
+      </div>
+      {{- partial "pagination.html" $paginator -}}
+      {{- else -}}
+      <div class="empty-state"><p>暂无文章。</p></div>
+      {{- end }}
+
+    </div>
+  </div>
+
+  {{- else -}}
+  {{/* ── Taxonomy / term pages: simple grid ── */}}
+  {{ $paginator := .Paginate .Pages }}
+  {{ if $paginator.Pages -}}
+  <div class="posts-grid" id="posts-grid">
+    {{ range $paginator.Pages -}}
+      {{- partial "post-card.html" . -}}
+    {{- end }}
+  </div>
+  {{- partial "pagination.html" $paginator -}}
+  {{- else -}}
+  <div class="empty-state"><p>该分类下暂无文章。</p></div>
+  {{- end }}
+  {{- end }}
+
+</div>
+{{ end }}

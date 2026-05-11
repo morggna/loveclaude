@@ -1,0 +1,24 @@
+{{- $p := . -}}
+{{ if gt $p.TotalPages 1 -}}
+<nav class="pagination" aria-label="文章分页">
+  {{ if $p.HasPrev -}}
+  <a href="{{ $p.Prev.URL }}" class="page-link page-link-wide" aria-label="较新文章">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    较新
+  </a>
+  {{- end }}
+
+  {{ range $p.Pagers -}}
+  <a href="{{ .URL }}" class="page-link{{ if eq .PageNumber $p.PageNumber }} active{{ end }}" aria-label="第 {{ .PageNumber }} 页">
+    {{ .PageNumber }}
+  </a>
+  {{- end }}
+
+  {{ if $p.HasNext -}}
+  <a href="{{ $p.Next.URL }}" class="page-link page-link-wide" aria-label="较旧文章">
+    较旧
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+  </a>
+  {{- end }}
+</nav>
+{{- end }}

@@ -1,0 +1,49 @@
+<header class="site-header" id="site-header">
+  <nav class="nav container">
+
+    {{/* Logo */}}
+    <a href="{{ "/" | relLangURL }}" class="nav-logo" aria-label="{{ site.Title }}">
+      {{- site.Title -}}
+    </a>
+
+    {{/* Primary links */}}
+    <ul class="nav-links" id="nav-links" role="list">
+      {{ range site.Menus.main -}}
+      <li>
+        <a href="{{ .URL }}" class="nav-link{{ if $.IsMenuCurrent `main` . }} active{{ end }}">
+          {{ .Name }}
+        </a>
+      </li>
+      {{- end }}
+    </ul>
+
+    <div class="nav-actions">
+
+      {{/* Client-side language switcher — translation handled in JS */}}
+      <div class="lang-switcher" id="lang-switcher">
+        <button class="lang-current" id="lang-toggle" aria-haspopup="listbox" aria-expanded="false" aria-label="切换语言">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span id="lang-label">中文</span>
+          <svg class="lang-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="lang-dropdown" id="lang-dropdown" role="listbox" aria-label="语言选项">
+          <button class="lang-option" data-lang="zh"  role="option">🇨🇳 中文</button>
+          <button class="lang-option" data-lang="en"  role="option">🇺🇸 English</button>
+          <button class="lang-option" data-lang="ja"  role="option">🇯🇵 日本語</button>
+          <button class="lang-option" data-lang="es"  role="option">🇪🇸 Español</button>
+        </div>
+      </div>
+
+      {{/* Dark/light toggle */}}
+      <button class="nav-btn" id="theme-toggle" aria-label="切换主题" title="切换主题">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+
+      {{/* Mobile hamburger */}}
+      <button class="nav-btn nav-mobile-toggle" id="mobile-menu-toggle" aria-label="导航菜单" aria-expanded="false" aria-controls="nav-links">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+
+    </div>
+  </nav>
+</header>

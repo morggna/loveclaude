@@ -1,0 +1,108 @@
+{{/* ── Right-click Protection Modal ────────────────────────────────
+     Rendered in baseof.html. Only activates on pages whose
+     <article> has data-protected="true".
+     First right-click  → show this warning, wait for acknowledgement.
+     Second right-click → redirect home + clear 30-day trust.
+──────────────────────────────────────────────────────────────────── */}}
+<div id="rc-overlay" class="rc-overlay" role="alertdialog"
+     aria-modal="true" aria-labelledby="rc-title" hidden>
+  <div class="rc-backdrop"></div>
+  <div class="rc-modal">
+
+    {{/* Large shield */}}
+    <div class="rc-shield-wrap" aria-hidden="true">
+      <svg class="rc-shield-svg" width="52" height="52" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="1.4"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <polyline points="9 12 11 14 15 10"/>
+      </svg>
+      <div class="rc-shield-ring" aria-hidden="true"></div>
+    </div>
+
+    <h2 class="rc-title" id="rc-title">受保护文章</h2>
+    <p class="rc-desc">
+      此内容受版权法保护。<br>
+      <strong>未经作者书面授权，严禁以任何形式转载、复制或传播。</strong>
+    </p>
+
+    {{/* Collapsible law section */}}
+    <div class="rc-law-wrap">
+      <button class="rc-law-toggle" id="rc-law-toggle" aria-expanded="false">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <span>查看适用法律条文</span>
+        <svg class="rc-law-chevron" width="13" height="13" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+
+      <div class="rc-law-content" id="rc-law-content" hidden>
+
+        <div class="rc-law-block">
+          <div class="rc-law-block-header">
+            <span class="rc-law-flag">🇳🇿</span>
+            <h4>新西兰版权法 1994<span class="rc-law-en">Copyright Act 1994 (NZ)</span></h4>
+          </div>
+          <dl class="rc-law-list">
+            <dt>第 14 条 — 版权的性质</dt>
+            <dd>版权是对版权作品进行特定行为的排他性权利。原创文学作品（包括博客文章及在线内容）受本法保护，版权自作品创作之时起自动归属于作者，无需注册登记。</dd>
+            <dt>第 16 条 — 受版权限制的行为</dt>
+            <dd>未经版权所有人授权，任何人不得：(a) 复制全部或部分作品；(b) 向公众发行作品副本；(c) 向公众传播或再传播作品；(d) 制作作品的改编版本。在新西兰境内实施上述行为，构成版权侵权。</dd>
+            <dt>第 121 条 — 民事救济</dt>
+            <dd>版权所有人可就侵权行为申请禁令、要求赔偿实际损失或追缴侵权所得利润，法院亦可判令销毁侵权副本。</dd>
+            <dt>第 131 条 — 刑事责任</dt>
+            <dd>以商业目的从事版权侵权活动，最高可判处 <strong>5 年有期徒刑</strong>或相应罚款。</dd>
+          </dl>
+        </div>
+
+        <div class="rc-law-block">
+          <div class="rc-law-block-header">
+            <span class="rc-law-flag">🇳🇿</span>
+            <h4>新西兰隐私法 2020<span class="rc-law-en">Privacy Act 2020 (NZ)</span></h4>
+          </div>
+          <dl class="rc-law-list">
+            <dt>信息隐私原则 11 — 个人信息披露限制</dt>
+            <dd>机构或个人在未获当事人同意的情况下，不得向第三方披露涉及个人的私密信息。本文部分内容涉及作者个人经历，擅自传播可能违反本原则。</dd>
+            <dt>第 69 条 — 隐私侵权之诉</dt>
+            <dd>任何因他人行为导致隐私权受到侵害的人，均可通过隐私专员（Privacy Commissioner）申诉，并可就精神损害及实际损失申请赔偿。</dd>
+            <dt>第 113 条 — 隐私专员的职权</dt>
+            <dd>新西兰隐私专员有权就涉嫌违反隐私原则的行为展开调查，并可提起法律程序。</dd>
+          </dl>
+        </div>
+
+        <p class="rc-law-note">
+          以上为摘要性中文说明，<strong>以新西兰官方英文文本为准</strong>。<br>
+          完整法律原文：
+          <a href="https://www.legislation.govt.nz/act/public/1994/0143/latest/whole.html" target="_blank" rel="noopener">Copyright Act 1994</a> ·
+          <a href="https://www.legislation.govt.nz/act/public/2020/0031/latest/whole.html" target="_blank" rel="noopener">Privacy Act 2020</a>
+        </p>
+
+      </div>{{/* end .rc-law-content */}}
+    </div>{{/* end .rc-law-wrap */}}
+
+    <button class="rc-accept-btn" id="rc-accept-btn" type="button">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      我理解并接受
+    </button>
+
+    <button class="rc-reject-btn" id="rc-reject-btn" type="button">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+      返回主页
+    </button>
+
+  </div>{{/* end .rc-modal */}}
+</div>{{/* end #rc-overlay */}}

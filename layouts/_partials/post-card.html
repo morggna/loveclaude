@@ -1,0 +1,59 @@
+<article class="post-card{{ if .Params.protected }} post-card--protected{{ end }}"
+  data-title="{{ .Title }}"
+  data-description="{{ if .Params.protected }}受保护文章{{ else }}{{ .Description }}{{ end }}"
+  data-categories="{{ delimit .Params.categories "," }}"
+  data-tags="{{ delimit .Params.tags "," }}"
+  {{ if .Params.protected }}data-protected="true"{{ end }}>
+  <a href="{{ .RelPermalink }}" class="post-card-link" tabindex="0">
+
+    {{ if .Params.cover -}}
+    <div class="card-media">
+      <img src="{{ .Params.cover }}" alt="{{ .Title }}" loading="lazy" decoding="async">
+      {{ if .Params.protected -}}
+      <div class="card-lock" aria-label="受保护文章">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      {{- end }}
+    </div>
+    {{- else -}}
+    <div class="card-media card-media--emoji">
+      <span class="card-cover-title-bg" aria-hidden="true">{{ .Title }}</span>
+      {{ with .Params.emoji -}}<span class="card-emoji" aria-hidden="true">{{ . }}</span>{{- end }}
+      {{ if .Params.protected -}}
+      <div class="card-lock" aria-label="受保护文章">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      {{- end }}
+    </div>
+    {{- end }}
+
+    <div class="card-body">
+      <time class="card-date" datetime="{{ .Date.Format `2006-01-02` }}">
+        {{ .Date.Format (site.Params.dateFormat | default "2006-01-02") }}
+      </time>
+      <h3 class="card-title">{{ .Title }}</h3>
+      {{ if .Params.protected -}}
+      <p class="card-excerpt card-excerpt--protected">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        受保护内容，验证后可阅读
+      </p>
+      {{- else -}}
+      {{ with .Description -}}
+      <p class="card-excerpt">{{ . | truncate 60 "" }}</p>
+      {{- end }}
+      {{- end }}
+      <div class="card-meta">
+        {{ with .Params.categories -}}
+        <span class="post-category">{{ index . 0 }}</span>
+        {{- end }}
+        {{ if .Params.protected -}}
+        <span class="card-protected-tag">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          加密
+        </span>
+        {{- end }}
+      </div>
+    </div>
+
+  </a>
+</article>

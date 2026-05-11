@@ -1,0 +1,326 @@
+{{ define "main" }}
+<div class="about-page">
+  <div class="container">
+
+    {{/* ── Hero ─────────────────────────────────────────────────────── */}}
+    <div class="about-hero">
+      <div class="about-avatar" aria-hidden="true">
+        <img src="/download/touxiang.png" alt="iWSheng" class="about-avatar-img">
+        <div class="about-avatar-ring"></div>
+      </div>
+      <div class="about-identity">
+        <h1 class="about-name">iWSheng</h1>
+        <p class="about-handle">@iwsheng · <span class="about-status">新西兰 · UTC+13</span></p>
+        <p class="about-tagline">"祝你下一次哭，是上岸了。"</p>
+        <div class="about-socials">
+          <a class="about-social-btn about-social-btn--tg"
+             href="https://t.me/AmexHKCenturion" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.08 13.517l-2.971-.924c-.645-.204-.657-.645.136-.953l11.243-4.332c.537-.194 1.006.131.837.94z"/>
+            </svg>
+            Telegram
+          </a>
+          <a class="about-social-btn about-social-btn--x"
+             href="https://x.com/bloomatlow/" target="_blank" rel="noopener noreferrer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            Twitter / X
+          </a>
+          <a class="about-social-btn about-social-btn--mail" href="mailto:admin@iws.tw">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <polyline points="2,4 12,13 22,4"/>
+            </svg>
+            admin@iws.tw
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {{/* ── Stat chips ──────────────────────────────────────────────── */}}
+    <div class="about-chips">
+      <span class="about-chip">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        永远年轻的90后
+      </span>
+      <span class="about-chip">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        男 · 185cm
+      </span>
+      <span class="about-chip">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        奥克兰，新西兰
+      </span>
+      <span class="about-chip">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        既得利益者 · 商人
+      </span>
+    </div>
+
+    {{/* ── Inline TOC (triggers floating TOC JS) ───────────────────── */}}
+    <div class="post-body-wrap about-toc-host">
+      <nav class="toc" aria-label="目录">
+        <p class="toc-title">目录</p>
+        <div id="TableOfContents">
+          <ul>
+            <li><a href="#about-tech">技术 &amp; 折腾</a></li>
+            <li><a href="#about-interests">兴趣爱好</a></li>
+            <li><a href="#about-beliefs">信仰与价值观</a></li>
+            <li><a href="#about-story">我的生平</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    {{/* ── Tech / 折腾 ─────────────────────────────────────────────── */}}
+    <div id="about-tech" class="about-section">
+      <h2 class="about-section-title">
+        <span class="about-section-icon" aria-hidden="true">⚙️</span>
+        技术 &amp; 折腾
+      </h2>
+      <div class="about-skill-grid">
+        <div class="about-skill-card">
+          <div class="about-skill-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <div>
+            <strong>HTML &amp; PHP</strong>
+            <span>初中学历全凭无师自通，VS Code + Dreamweaver 写垃圾代码或改大佬源码，算自己的小乐趣</span>
+          </div>
+        </div>
+        <div class="about-skill-card">
+          <div class="about-skill-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div>
+            <strong>Linux</strong>
+            <span>熟练使用 Debian，最近爱上了 Fedora，正在慢慢过渡中</span>
+          </div>
+        </div>
+        <div class="about-skill-card">
+          <div class="about-skill-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div>
+            <strong>AI / GPTs</strong>
+            <span>用 OpenAI GPTs 搭建并训练能模仿自己的 AI，把习惯、说话方式和价值观喂给它，希望有一天它能代替我上网冲浪</span>
+          </div>
+        </div>
+        <div class="about-skill-card">
+          <div class="about-skill-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <strong>代理 &amp; 网络</strong>
+            <span>始于 MJJ，热衷折腾 VPN 节点搭建和买服务器吃灰，偏爱 Xray 协议，没事打开 SpeedTest 测速满足一下</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{/* ── Interests ───────────────────────────────────────────────── */}}
+    <div id="about-interests" class="about-section">
+      <h2 class="about-section-title">
+        <span class="about-section-icon" aria-hidden="true">🎮</span>
+        兴趣爱好
+      </h2>
+      <div class="about-interest-list">
+
+        <div class="about-interest-item">
+          <div class="about-interest-head">
+            <span class="about-interest-emoji">🃏</span>
+            <strong>玩卡</strong>
+          </div>
+          <p>混迹在 Telegram 各个玩卡交流群的菜鸡，受 COVID-19 影响被迫入坑，也受朋友"祥林嫂"多次洗脑，就这样走上了不归路。当然，最终还是卡玩我。如果你在某个卡群看到叫"谷底开花"的人正在被各路大佬骂，那就是我。</p>
+        </div>
+
+        <div class="about-interest-item">
+          <div class="about-interest-head">
+            <span class="about-interest-emoji">🎮</span>
+            <strong>GTA 系列</strong>
+          </div>
+          <p><strong>GTA2：</strong>从小学开始接触，设备性能很烂，但从拳皇过渡过来依然震撼。<br>
+          <strong>罪恶都市：</strong>当时最爱输作弊码"PANZER"凭空生成坦克炸街，直到2017年才感受到剧情的震撼。<br>
+          <strong>圣安地列斯：</strong>第一款完整体验剧情的游戏，第一次感受美国帮派斗争的黑暗。<br>
+          <strong>GTA4：</strong>由于只是 XBOX 移植版，体验糟糕，虽然听说故事很好，始终没提起兴趣。<br>
+          <strong>GTA5：</strong>GTA 系列最大的王炸。金钱、社会黑暗、人性险恶、兄弟情义、家庭亲情，被 R 星写得淋漓尽致。2013 年的游戏到今天依然意犹未尽，强烈推荐。</p>
+        </div>
+
+        <div class="about-interest-item">
+          <div class="about-interest-head">
+            <span class="about-interest-emoji">🤖</span>
+            <strong>底特律：化身为人</strong>
+          </div>
+          <p>Quantic Dream 出品的电影向游戏。整个游戏充斥着难以抉择的选项，每个选择都带来完全不同的故事发展。玩着玩着就真的融入进去了，有时选错了会产生真实的遗憾和内疚。不剧透太多，交给你们去体会。</p>
+        </div>
+
+        <div class="about-interest-item">
+          <div class="about-interest-head">
+            <span class="about-interest-emoji">📺</span>
+            <strong>政治类自媒体</strong>
+          </div>
+          <p>长期关注 YouTube 博主：小岛大浪吹、Cheap。两位都能以幽默轻松且较为中立的方式叙述历史或现代政治，让人易懂。本人政治立场通常与这两位博主相同。</p>
+        </div>
+
+      </div>
+    </div>
+
+    {{/* ── Beliefs ─────────────────────────────────────────────────── */}}
+    <div id="about-beliefs" class="about-section">
+      <h2 class="about-section-title">
+        <span class="about-section-icon" aria-hidden="true">🧭</span>
+        信仰与价值观
+      </h2>
+      <div class="about-belief-tags">
+        <span class="about-belief-tag">汉传佛教</span>
+        <span class="about-belief-tag">社会达尔文进化论</span>
+        <span class="about-belief-tag">魁北克民族主义</span>
+        <span class="about-belief-tag">反对跨性别者</span>
+        <span class="about-belief-tag">异性恋</span>
+      </div>
+    </div>
+
+    {{/* ── Life Story ──────────────────────────────────────────────── */}}
+    <div id="about-story" class="about-section">
+      <h2 class="about-section-title">
+        <span class="about-section-icon" aria-hidden="true">📖</span>
+        我的生平
+      </h2>
+
+      <div class="about-story-chapters">
+
+        <div class="about-chapter">
+          <div class="about-chapter-marker">八岁</div>
+          <div class="about-chapter-body">
+            <p>我出生于一个昔日充满欢声笑语的富裕家庭。父母经营着本市最大的民营幼儿园，其收益足以让我们过上优渥的生活。然而，命运似乎总爱开玩笑。在我八岁那年，因为父母感情破裂，母亲带走了我们所有的财产。一夜之间，我和父亲从富裕的生活跌入了贫穷的深渊。尽管生活变得艰难，但父亲始终不屈不挠，尽其所能地照顾我，确保我不受寒饿之苦。那些日子，我们搬入廉价出租屋，依靠简单的餐食维持生计。亲朋好友的异样眼光、除夕夜的孤独，这些都深深刻画在我的记忆中。尽管别人家的新年都充斥着欢声笑语，而我和父亲只能窝在出租屋里吃着简单的速冻水饺，但在父亲身边，我感到无比的幸福。</p>
+            <p>父亲的坚韧和不懈努力，教会了我一课：</p>
+            <blockquote class="about-quote about-quote--inline">
+              <p>无论环境多么恶劣，人都能凭借勤劳和智慧生存下去。</p>
+            </blockquote>
+            <p>而亲朋好友看我们家落魄时的嘴脸，也让我学会了：<em>"有钱能买通天路，没钱难做知情人。"</em></p>
+            <p>这段经历深刻塑造了我对生活的态度。我开始鄙视那种无所作为、依赖他人的生活方式。我坚信，不论出身如何，个人的命运最终还是掌握在自己手中。我看到了社会上一些年轻人的躺平态度，他们抱怨社会不公，却不愿为改变自己的处境付出努力。我深知，唯有通过自己的勤奋和智慧，才能在这个纷繁复杂的世界中开辟出一条属于自己的道路。<em>唯有破圈，才能破局，才能改变现状，才能自立。</em></p>
+          </div>
+        </div>
+
+        <div class="about-chapter">
+          <div class="about-chapter-marker">十四岁</div>
+          <div class="about-chapter-body">
+            <p>在我十四岁那年，人生的一个重要转折点到来了。正值初中毕业，面临着是否继续走传统教育道路的抉择。我深知，自己可能并非是读书的料，而且按照常规的教育路径，即使付出巨大的时间和金钱代价，也未必能改变我们家庭的困境。我不愿意成为那些抱怨命运却坐以待毙的年轻人之一。我相信，通过实际行动和辛勤劳动，我可以为家庭带来实质的改变。</p>
+            <p>因此，我决定提前步入社会。那是一个经过深思熟虑的决定，我与父亲讨论了数小时。在那个即将不步入高中的重要时刻，父亲给了我一句深刻的忠告：</p>
+            <blockquote class="about-quote about-quote--inline">
+              <p>读万卷书或行万里路，你必须要选一样，然后自己选的路就算跪着也要走完。</p>
+              <cite>— 这句话成为我后来人生的座右铭</cite>
+            </blockquote>
+            <p>于是，我接受了父亲给我的建议——<em>"穷人家孩子的三大手艺：理发、厨师、汽修"</em>，在尚小的年纪踏上了前往北京长达六个小时的绿皮火车，决心学习美发行业。我梦想着有朝一日能回到家乡开一家自己的小店，过上平淡却充实的生活。</p>
+          </div>
+        </div>
+
+        <div class="about-chapter">
+          <div class="about-chapter-marker">北京</div>
+          <div class="about-chapter-body">
+            <p>在北京，我住进了一间潮湿的出租屋，每天像老鼠一样辛苦地奔波。那里的生活并不容易，但我从未退缩。每一次挫折都让我更加坚定，每一次困难都让我更加成熟。我开始体会到，不论是生活还是事业，都需要坚持和努力。我坚信，只要有足够的努力，任何困难都可以被克服。在那两年的时间里，我不仅学会了一门手艺，更重要的是，我学会了如何在逆境中生存和成长。</p>
+            <p>进入金融行业的机遇对我的人生轨迹产生了深远的影响。在美发店工作时，我有幸遇到了一位能改变我命运的贵人。他不仅是一位成功的企业家，也是北京的一位高官。通过对话和交流，他看到了我潜在的能力和对未来的渴望。他的赏识为我打开了一扇全新的大门——我被引荐到他在北京的金融公司工作，开始了我职业生涯的新篇章。</p>
+            <p>在金融公司的任职期间，我学会了许多宝贵的社会经验和人情世故。我深刻感受到了人性中的复杂和丑陋，这些经历让我更加成熟和理智。我开始理解，想要在商业世界中立足，仅凭专业技能是不够的，必须学会洞悉人心，理解人际关系的微妙。这段经历不仅让我在工作上取得了显著的成就，期间荣获"优秀青年企业家"、"中小企业联合商会常任理事"等称号，而且让我具备了管理团队和领导公司的能力。我不仅担任了主管职务，还被同事和上级认可为一个有能力的管理者，向公司的高层证明了我不再只是<em>"一个走后门进公司的关系户"</em>。</p>
+            <p>我从这位贵人那里学到了<em>"将心比心、以心换心"</em>的处世哲学，这影响了我的人生观和价值观。我开始意识到，真正的成功不仅仅在于个人的成就，还在于能够理解并尊重他人。这段经历为我后来回到家乡创办公司打下了坚实的基础。</p>
+          </div>
+        </div>
+
+        <div class="about-chapter">
+          <div class="about-chapter-marker">2019</div>
+          <div class="about-chapter-body">
+            <p>2019年，当公司即将上市，我面临了一个新的挑战。在股权架构的整改过程中，我的股份被不幸稀释，最终导致我离开了公司。回到家乡的我，虽然手握一笔丰厚的补偿金，足以确保我和父亲的无忧生活，但我并不满足于此。恰逢全球新冠疫情（COVID-19）的爆发，我为家庭购置了房产和车辆，享受了一段短暂的安逸生活。然而，我内心深处的不甘和上进心驱使我再次站起。</p>
+            <p>依托我在金融公司积累的经验和人脉资源，我与一些志同道合的伙伴，以及北京公司的几位同僚，在家乡创办了一家集团公司。我们的目标是将家乡的服装制造和农业产品从国内市场转向海外出口，同时也为当地产业开辟更广阔的销售渠道。这不仅是一个商业机遇，更是我对家乡的一份贡献。现在，我可以自豪地说，我们的集团公司拥有超过四十名员工，公司实缴注册资本高达五千万元人民币，公司年收益达四百万元人民币。我们的努力不仅改变了自己的命运，也为家乡的经济发展做出了贡献，也向当时那些嘲笑我们家的亲戚们证明，<em>我和我的父亲并不是一事无成被社会淘汰的窝囊废。</em></p>
+            <p>我的经历证明了，无论遇到多大的挑战，只要有决心和勤奋，就能够开创新的局面。在金融公司的工作经历，让我学会了如何在复杂的社会环境中生存和发展。这些宝贵的经验成为了我创业旅程中的坚实基石。</p>
+            <p>在我的职业生涯中，就任北京公司期间学习到的公司价值观<em>"物以稀为贵，我以你为荣"</em>，让我深刻地意识到了每一个遇见的人都可能成为宝贵的财富。我始终坚信，优秀的团队是成功的关键。并且我一直坚信着凯迪拉克在2019年品牌故事中所讲述的一句话：</p>
+            <blockquote class="about-quote about-quote--inline">
+              <p>所有的伟大，都源于一个勇敢的开始。</p>
+            </blockquote>
+            <p>虽然我具备一定的创业勇气和市场洞察力，但我也深知，成功绝非一蹴而就。它需要不断的学习、适应以及与时俱进。不论是在服装制造还是农业产品出口方面，我都努力保持对市场动态的敏锐感知，希望能够引领公司走向更广阔的前景。</p>
+          </div>
+        </div>
+
+        <div class="about-chapter">
+          <div class="about-chapter-marker">此后</div>
+          <div class="about-chapter-body">
+            <p>如今，我所领导的公司在本地市场取得了一些成就，也开始触及国际市场。我们的团队正在成长，业务也在不断扩展。这一切成就，都离不开团队成员的辛勤工作和共同努力。我对此感到非常自豪，但也清楚，还有很长的路要走。</p>
+            <p>展望未来，我希望能够继续与有才华的人一起工作，共同创造更多的机会。我相信，通过我们的团结合作，可以克服任何困难，实现更多的目标。我对未来充满期待，希望无论是个人发展还是公司的成长，我们都能继续追求卓越，为社会创造更多价值。我感谢过去的挑战，也期待着未来的可能。</p>
+            <p>后来发生的事，在博客的<a href="/posts/zaijian-zhongguo-1/">《再见中国》</a>系列里——那是更难说出口的那部分。</p>
+            <blockquote class="about-quote about-quote--inline">
+              <p>我的爷爷苦了一辈子，我的父亲苦了半辈子，这辈子就算我拼了命，也要给他们一个交代。</p>
+            </blockquote>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="about-story-meta">上次更新自 2024年1月29日 · 属于我的故事，会继续更新，这些均为我的切身经历。</p>
+    </div>
+
+    {{/* ── Contact / CTA ───────────────────────────────────────────── */}}
+    <div class="about-contact-card">
+      <div class="about-contact-text">
+        <h3>想聊聊？</h3>
+        <p>无论是技术问题、交换友链，还是只是打个招呼，都欢迎联系。</p>
+      </div>
+      <div class="about-contact-actions">
+        <a href="https://t.me/AmexHKCenturion" class="about-cta-btn about-cta-btn--primary"
+           target="_blank" rel="noopener noreferrer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.08 13.517l-2.971-.924c-.645-.204-.657-.645.136-.953l11.243-4.332c.537-.194 1.006.131.837.94z"/>
+          </svg>
+          Telegram 联系
+        </a>
+        <a href="mailto:admin@iws.tw" class="about-cta-btn about-cta-btn--secondary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <polyline points="2,4 12,13 22,4"/>
+          </svg>
+          发送邮件
+        </a>
+        <a href="/friends/" class="about-cta-btn about-cta-btn--ghost">
+          友情链接
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>{{/* end .container */}}
+</div>{{/* end .about-page */}}
+
+{{/* ── Floating TOC (reuses main.js initFloatingTOC) ─────────────── */}}
+<div id="toc-float" class="toc-float" hidden aria-label="浮动目录">
+  <div class="toc-float-panel" id="toc-float-panel" hidden>
+    <div class="toc-float-panel-hd">
+      <p class="toc-title">目录</p>
+      <button class="toc-float-close" id="toc-float-close" aria-label="关闭目录">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <nav>
+      <div id="TableOfContents">
+        <ul>
+          <li><a href="#about-tech">技术 &amp; 折腾</a></li>
+          <li><a href="#about-interests">兴趣爱好</a></li>
+          <li><a href="#about-beliefs">信仰与价值观</a></li>
+          <li><a href="#about-story">我的生平</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <button class="toc-float-btn" id="toc-float-btn"
+          aria-expanded="false" aria-controls="toc-float-panel" title="展开目录">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <line x1="8" y1="6"  x2="21" y2="6"/>
+      <line x1="8" y1="12" x2="21" y2="12"/>
+      <line x1="8" y1="18" x2="21" y2="18"/>
+      <line x1="3" y1="6"  x2="3.01" y2="6"/>
+      <line x1="3" y1="12" x2="3.01" y2="12"/>
+      <line x1="3" y1="18" x2="3.01" y2="18"/>
+    </svg>
+    <span>目录</span>
+  </button>
+</div>
+{{ end }}

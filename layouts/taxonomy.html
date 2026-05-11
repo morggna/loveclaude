@@ -1,0 +1,20 @@
+{{ define "main" }}
+{{/* Taxonomy terms list — e.g. /tags/ or /categories/ */}}
+<div class="list-hero">
+  <div class="container">
+    <p class="hero-label">{{ .Type | upper }}</p>
+    <h1 class="list-title">{{ .Title }}</h1>
+  </div>
+</div>
+
+<div class="container">
+  <div class="tags-cloud">
+    {{ range .Data.Terms.Alphabetical }}
+    <a href="{{ .Page.RelPermalink }}" class="tag-item tag-item--size-{{ len .Pages }}">
+      <span aria-hidden="true">#</span>{{ .Page.Title }}
+      <span class="tag-count">{{ len .Pages }}</span>
+    </a>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
