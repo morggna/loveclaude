@@ -468,6 +468,13 @@ function initTocHighlight() {
 
 /* ── Blog: search, view-toggle, filter ───────────────────────────── */
 const VIEW_KEY = 'loveclaude-view';
+const MOBILE_VIEW_QUERY = '(max-width: 760px)';
+
+function resolvePostView() {
+  const saved = localStorage.getItem(VIEW_KEY);
+  if (saved === 'grid' || saved === 'list') return saved;
+  return window.matchMedia(MOBILE_VIEW_QUERY).matches ? 'list' : 'grid';
+}
 
 function setView(view) {
   const grid = document.getElementById('posts-grid');
@@ -510,8 +517,7 @@ function initBlogControls() {
   const grid = document.getElementById('posts-grid');
   if (!grid) return;
 
-  const saved = localStorage.getItem(VIEW_KEY) || 'grid';
-  setView(saved);
+  setView(resolvePostView());
 
   document.querySelectorAll('.view-btn').forEach(btn => {
     btn.addEventListener('click', () => {
