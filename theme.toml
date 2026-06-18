@@ -1,7 +1,7 @@
 name        = "LoveClaude"
 license     = "MIT"
 licenselink = "https://github.com/iwsheng/loveclaude/blob/main/LICENSE"
-description = "A Claude / Anthropic-inspired Hugo blog theme — dark-first, serif typography, glass morphism, TOTP protected articles, floating TOC, and a life-tree homepage."
+description = "A Claude / Anthropic-inspired Hugo blog theme — dark-first, serif typography, glass morphism, floating TOC, and a life-tree homepage."
 homepage    = "https://github.com/iwsheng/loveclaude"
 demosite    = "https://iws.tw"
 tags        = ["blog", "dark", "responsive", "multilingual", "toc", "search", "rss"]
@@ -15,15 +15,11 @@ features = [
   "responsive",
   "dark-mode",
   "light-mode",
-  "multilingual",
   "card-list",
   "pagination",
   "toc",
   "search",
   "rss",
-  "protected-articles",
-  "right-click-protection",
-  "client-side-translation",
   "life-tree-homepage",
   "floating-toc",
   "glass-morphism",

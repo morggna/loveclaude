@@ -57,18 +57,11 @@
             {{ end }}
           </div>
           <h3 class="ltree-card-title">
-            <a href="{{ $p.RelPermalink }}"{{ if $p.Params.protected }} data-protected="true"{{ end }}>{{ $p.Title }}{{ if $p.Params.protected }}&thinsp;<svg style="display:inline-block;vertical-align:middle;opacity:0.55" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>{{ end }}</a>
+            <a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
           </h3>
-          {{ if $p.Params.protected -}}
-          <p class="ltree-card-desc ltree-card-desc--protected">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            受保护内容
-          </p>
-          {{- else -}}
           {{ with $p.Description }}
           <p class="ltree-card-desc">{{ . }}</p>
           {{ end }}
-          {{- end }}
         </article>
       </div>
 
