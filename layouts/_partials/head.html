@@ -17,6 +17,23 @@
 })();
 </script>
 
+{{/* language-head-fallback: runs before paint when nginx negotiation is not active yet. */}}
+<script>
+(function(){
+  var fallbackMarker='language-head-fallback';
+  var docLang=(document.documentElement.lang||'').toLowerCase();
+  if(!docLang.startsWith('zh')) return;
+  if(location.pathname.indexOf('/en/')===0) return;
+  var cookie=document.cookie||'';
+  if(cookie.indexOf('loveclaude-language=zh-cn')!==-1) return;
+  var savedEnglish=cookie.indexOf('loveclaude-language=en')!==-1;
+  var list=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||''];
+  var first=String(list[0]||'').toLowerCase();
+  if(!savedEnglish&&(!first||first.startsWith('zh'))) return;
+  location.replace('/en'+location.pathname+location.search+location.hash);
+})();
+</script>
+
 {{/* Local fonts via Hugo Pipes — published + fingerprinted, zero external requests */}}
 {{ $sr  := resources.Get "fonts/SourceSerif4-Regular.ttf"       | resources.Fingerprint "sha256" }}
 {{ $ssb := resources.Get "fonts/SourceSerif4-SemiBold.ttf"      | resources.Fingerprint "sha256" }}
