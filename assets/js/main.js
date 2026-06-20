@@ -29,6 +29,7 @@ function applyTheme(theme) {
 const LANGUAGE_KEY = 'loveclaude-language';
 const LANGUAGE_SOURCE_KEY = 'loveclaude-language-source';
 const DEFAULT_LANGUAGE = 'zh-cn';
+const LANGUAGE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 const LANGUAGES = {
   'zh-cn': { label: '中文', htmlLang: 'zh-CN' },
   en: { label: 'English', htmlLang: 'en-US' },
@@ -60,19 +61,7 @@ function detectBrowserLanguage(languageList) {
     const lang = languageFromCode(candidate);
     if (lang) return lang;
   }
-  return 'zh';
-}
-
-function resolveLanguagePreference(options = {}) {
-  const storage = options.storage || localStorage;
-  const saved = normalizeSiteLanguage(storage.getItem(LANGUAGE_KEY));
-  const savedSource = storage.getItem(LANGUAGE_SOURCE_KEY);
-  if (saved && savedSource === 'manual') {
-    return { language: saved, source: 'saved' };
-  }
-
-  const languageList = options.languages || navigator.languages || [navigator.language];
-  return { language: detectBrowserLanguage(languageList), source: 'browser' };
+  return 'en';
 }
 
 function pageLanguageFromDocument() {
@@ -105,24 +94,12 @@ function setLanguageUI(language) {
   });
 }
 
-function findLanguageLink(language) {
+function persistLanguageChoice(language) {
   const target = normalizeSiteLanguage(language);
-  if (!target) return null;
-  return document.querySelector(`.lang-option[data-lang="${target}"]`);
-}
-
-function maybeRedirectToPreferredLanguage(preference) {
-  const current = pageLanguageFromDocument();
-  const target = normalizeSiteLanguage(preference?.language);
-  if (!target || target === current || current !== DEFAULT_LANGUAGE) return false;
-
-  const link = findLanguageLink(target);
-  const href = link?.href || link?.getAttribute?.('href');
-  if (!href) return false;
-
-  if (typeof window.location.replace === 'function') window.location.replace(href);
-  else window.location.href = href;
-  return true;
+  if (!target) return;
+  localStorage.setItem(LANGUAGE_KEY, target);
+  localStorage.setItem(LANGUAGE_SOURCE_KEY, 'manual');
+  document.cookie = `${LANGUAGE_KEY}=${encodeURIComponent(target)}; Path=/; Max-Age=${LANGUAGE_COOKIE_MAX_AGE}; SameSite=Lax`;
 }
 
 function initLanguageSwitcher() {
@@ -150,8 +127,7 @@ function initLanguageSwitcher() {
       event.stopPropagation();
       const language = normalizeSiteLanguage(option.dataset.lang);
       if (!language) return;
-      localStorage.setItem(LANGUAGE_KEY, language);
-      localStorage.setItem(LANGUAGE_SOURCE_KEY, 'manual');
+      persistLanguageChoice(language);
       setLanguageUI(language);
       closeMenu();
     });
@@ -166,7 +142,6 @@ function initLanguageSwitcher() {
   });
 
   setLanguageUI(pageLanguageFromDocument());
-  maybeRedirectToPreferredLanguage(resolveLanguagePreference());
 }
 
 /* ── Particle canvas animation ───────────────────────────────────── */
