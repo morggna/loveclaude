@@ -5039,7 +5039,7 @@ a.footer-badge:hover {
   .about-page--nouo .about-identity {
     flex: none;
     max-width: 100%;
-    width: min(100%, calc(100vw - 32px));
+    width: 100%;
   }
 
   .about-page--nouo .about-name {
