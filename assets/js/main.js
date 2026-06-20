@@ -47,7 +47,7 @@ const LANGUAGE_SKIP_SELECTOR = [
   '[data-no-translate]',
 ].join(',');
 const TRANSLATABLE_ATTRIBUTES = ['title', 'aria-label', 'placeholder', 'alt'];
-const TRANSLATION_ENDPOINT = '/api/translate';
+const TRANSLATION_ENDPOINT = 'https://translate.googleapis.com/translate_a/single';
 const translationCache = new Map();
 let originalLanguageContent = null;
 let currentLanguage = 'zh';
