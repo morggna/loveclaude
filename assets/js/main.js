@@ -948,6 +948,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCodeCopy();
   initTocHighlight();
   initImageBlurUp();
+  initLanguageSwitcher();
   initArticleTree();
   initFloatingTOC();
 });
