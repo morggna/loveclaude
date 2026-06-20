@@ -27,6 +27,7 @@ function applyTheme(theme) {
 
 /* ── Language selector / client-side translation ─────────────────── */
 const LANGUAGE_KEY = 'loveclaude-language';
+const LANGUAGE_SOURCE_KEY = 'loveclaude-language-source';
 const LANGUAGES = {
   zh: { label: '中文', htmlLang: 'zh-CN', translateCode: 'zh-CN' },
   en: { label: 'English', htmlLang: 'en', translateCode: 'en' },
@@ -80,7 +81,10 @@ function detectBrowserLanguage(languageList) {
 function resolveLanguagePreference(options = {}) {
   const storage = options.storage || localStorage;
   const saved = storage.getItem(LANGUAGE_KEY);
-  if (saved && LANGUAGES[saved]) return { language: saved, source: 'saved' };
+  const savedSource = storage.getItem(LANGUAGE_SOURCE_KEY);
+  if (saved && LANGUAGES[saved] && (saved !== 'zh' || savedSource === 'manual')) {
+    return { language: saved, source: 'saved' };
+  }
 
   const languageList = options.languages || navigator.languages || [navigator.language];
   return { language: detectBrowserLanguage(languageList), source: 'browser' };
@@ -249,7 +253,10 @@ async function applyLanguage(language, options = {}) {
   setLanguageUI(target);
   setDocumentLanguage(target);
   currentLanguage = target;
-  if (shouldPersist) localStorage.setItem(LANGUAGE_KEY, target);
+  if (shouldPersist) {
+    localStorage.setItem(LANGUAGE_KEY, target);
+    localStorage.setItem(LANGUAGE_SOURCE_KEY, 'manual');
+  }
 
   if (target === 'zh') {
     restoreOriginalContent();
@@ -273,7 +280,6 @@ async function applyLanguage(language, options = {}) {
     setLanguageUI('zh');
     setDocumentLanguage('zh');
     currentLanguage = 'zh';
-    if (shouldPersist) localStorage.setItem(LANGUAGE_KEY, 'zh');
     return false;
   } finally {
     document.body.classList.remove('translating');
