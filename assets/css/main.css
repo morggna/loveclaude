@@ -4957,31 +4957,41 @@ a.footer-badge:hover {
 .about-profile-placeholder span:nth-child(4) { width: 42%; }
 
 .about-typing-banner {
-  height: 34px;
-  margin: -2px 0 -4px;
+  color: var(--about-typing-color, var(--accent-l));
+  font-family: var(--f-body);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
   max-width: min(400px, 100%);
-  overflow: visible;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .about-typing-banner--hero {
-  height: 44px;
-  margin: 0;
-  flex: 0 1 420px;
-  max-width: min(420px, 100%);
+  flex: 0 1 auto;
+  max-width: min(360px, 100%);
   min-width: 0;
-  transform: translateY(1px);
+  transform: none;
 }
 
-.about-typing-svg {
-  display: block;
-  height: 34px;
+.about-typing-text {
+  animation: aboutTypingReveal 5400ms linear infinite;
+  color: inherit;
+  display: inline-block;
+  font-size: inherit;
+  letter-spacing: 0;
+  line-height: inherit;
   max-width: 100%;
-  width: 400px;
+  overflow: hidden;
+  vertical-align: top;
+  white-space: nowrap;
 }
 
-.about-typing-banner--hero .about-typing-svg {
-  height: 44px;
-  width: 420px;
+@keyframes aboutTypingReveal {
+  0% { clip-path: inset(0 100% 0 0); }
+  78%, 86% { clip-path: inset(0 0 0 0); }
+  100% { clip-path: inset(0 100% 0 0); }
 }
 
 .about-experience-list {
@@ -5038,8 +5048,9 @@ a.footer-badge:hover {
   }
 
   .about-hero-line {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: clamp(8px, 2.8vw, 12px);
+    row-gap: 2px;
     width: 100%;
   }
 
@@ -5054,9 +5065,10 @@ a.footer-badge:hover {
   }
 
   .about-page--nouo .about-socials {
-    display: grid;
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
     gap: 6px;
-    grid-template-columns: max-content max-content minmax(0, 1fr);
     max-width: 100%;
     overflow: hidden;
     width: 100%;
@@ -5081,11 +5093,11 @@ a.footer-badge:hover {
   }
 
   .about-page--nouo .about-social-btn--mail {
-    flex: none;
+    flex: 0 1 auto;
     justify-content: flex-start;
-    max-width: none;
+    max-width: 100%;
     overflow: hidden;
-    width: 100%;
+    width: auto;
   }
 
   .about-page--nouo .about-social-btn--mail .about-social-label {
@@ -5099,26 +5111,15 @@ a.footer-badge:hover {
   }
 
   .about-typing-banner {
-    height: 30px;
-    margin: -1px 0 -3px;
+    font-size: 0.92rem;
+    line-height: 1.65;
   }
 
   .about-typing-banner--hero {
-    flex: 1 1 0;
-    height: 31px;
-    max-width: none;
-    min-width: 120px;
-    transform: none;
-  }
-
-  .about-typing-svg {
-    height: 30px;
-    width: 100%;
-  }
-
-  .about-typing-banner--hero .about-typing-svg {
-    height: 31px;
-    width: 100%;
+    flex: 0 1 100%;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    max-width: 100%;
   }
 
   .about-profile-panel {
@@ -5137,6 +5138,7 @@ a.footer-badge:hover {
 
   .about-profile-card-list {
     margin-top: 10px;
+    max-width: 320px;
     overflow: hidden;
   }
 
