@@ -1,6 +1,6 @@
 {{ if and .Params.toc (gt (len .TableOfContents) 100) }}
-<nav class="toc" aria-label="目录">
-  <p class="toc-title">目录</p>
+<nav class="toc" aria-label="{{ if eq site.Language.Lang "en" }}Contents{{ else }}目录{{ end }}">
+  <p class="toc-title">{{ if eq site.Language.Lang "en" }}Contents{{ else }}目录{{ end }}</p>
   {{ .TableOfContents }}
 </nav>
 {{ end }}

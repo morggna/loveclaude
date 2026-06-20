@@ -2,7 +2,7 @@
 {{- errorf "LoveClaude requires Hugo v0.146.0+" -}}
 {{- end -}}
 <!DOCTYPE html>
-<html lang="{{ site.Language }}" data-theme="dark">
+<html lang="{{ site.Language.Locale | default site.Language.Lang }}" data-theme="dark">
 <head>
   {{- partial "head.html" . -}}
 </head>
@@ -13,7 +13,7 @@
     {{- block "main" . }}{{ end -}}
   </main>
   {{- partial "footer.html" . -}}
-  <button class="scroll-top" id="scroll-top" aria-label="回到顶部">
+  <button class="scroll-top" id="scroll-top" aria-label="{{ if eq site.Language.Lang "en" }}Back to top{{ else }}回到顶部{{ end }}">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
   </button>
 </body>

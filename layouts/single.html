@@ -1,4 +1,5 @@
 {{ define "main" }}
+{{- $isEn := eq site.Language.Lang "en" -}}
 {{- $cover := "" -}}
 {{- $coverAlt := .Title -}}
 {{- with .Params.cover -}}
@@ -42,18 +43,21 @@
         </time>
 
         {{ $chars := len (split .Plain "") }}
+        {{ $words := countwords .Plain }}
         {{ if site.Params.showReadingTime -}}
-        {{ $mins := div $chars 400 }}
+        {{ $readUnits := cond $isEn $words $chars }}
+        {{ $perMinute := cond $isEn 220 400 }}
+        {{ $mins := div $readUnits $perMinute }}
         {{ if lt $mins 1 }}{{ $mins = 1 }}{{ end }}
         <span class="post-info-item">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          {{ $mins }} 分钟阅读
+          {{ if $isEn }}{{ $mins }} min read{{ else }}{{ $mins }} 分钟阅读{{ end }}
         </span>
         {{- end }}
         {{ if site.Params.showWordCount -}}
         <span class="post-info-item">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-          {{ $chars }} 字
+          {{ if $isEn }}{{ $words }} words{{ else }}{{ $chars }} 字{{ end }}
         </span>
         {{- end }}
       </div>
@@ -86,12 +90,12 @@
 
 </article>
 
-<nav class="post-nav container" aria-label="前后文章">
+<nav class="post-nav container" aria-label="{{ if $isEn }}Previous and next posts{{ else }}前后文章{{ end }}">
   {{ with .NextInSection -}}
   <a href="{{ .RelPermalink }}" class="post-nav-link prev">
     <span class="post-nav-direction">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      上一篇
+      {{ if $isEn }}Previous{{ else }}上一篇{{ end }}
     </span>
     <span class="post-nav-title">{{ .Title }}</span>
   </a>
@@ -99,7 +103,7 @@
   {{ with .PrevInSection -}}
   <a href="{{ .RelPermalink }}" class="post-nav-link next">
     <span class="post-nav-direction">
-      下一篇
+      {{ if $isEn }}Next{{ else }}下一篇{{ end }}
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
     </span>
     <span class="post-nav-title">{{ .Title }}</span>
@@ -108,12 +112,12 @@
 </nav>
 
 {{ if and .Params.toc (gt (len .TableOfContents) 100) }}
-<div id="toc-float" class="toc-float" hidden aria-label="浮动文章目录">
+<div id="toc-float" class="toc-float" hidden aria-label="{{ if $isEn }}Floating table of contents{{ else }}浮动文章目录{{ end }}">
 
   <div class="toc-float-panel" id="toc-float-panel" hidden>
     <div class="toc-float-panel-hd">
-      <p class="toc-title">目录</p>
-      <button class="toc-float-close" id="toc-float-close" aria-label="关闭目录">
+      <p class="toc-title">{{ if $isEn }}Contents{{ else }}目录{{ end }}</p>
+      <button class="toc-float-close" id="toc-float-close" aria-label="{{ if $isEn }}Close contents{{ else }}关闭目录{{ end }}">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -123,7 +127,7 @@
 
   <button class="toc-float-btn" id="toc-float-btn"
           aria-expanded="false" aria-controls="toc-float-panel"
-          title="展开目录">
+          title="{{ if $isEn }}Open contents{{ else }}展开目录{{ end }}">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
          stroke="currentColor" stroke-width="2" aria-hidden="true">
       <line x1="8" y1="6"  x2="21" y2="6"/>
@@ -133,7 +137,7 @@
       <line x1="3" y1="12" x2="3.01" y2="12"/>
       <line x1="3" y1="18" x2="3.01" y2="18"/>
     </svg>
-    <span>目录</span>
+    <span>{{ if $isEn }}Contents{{ else }}目录{{ end }}</span>
   </button>
 
 </div>
@@ -143,7 +147,7 @@
 {{ if $related -}}
 <section class="related-posts">
   <div class="container">
-    <h2 class="section-title" style="margin-bottom:32px">相关文章</h2>
+    <h2 class="section-title" style="margin-bottom:32px">{{ if $isEn }}Related posts{{ else }}相关文章{{ end }}</h2>
     <div class="posts-grid posts-grid--3">
       {{ range $related -}}
         {{- partial "post-card.html" . -}}

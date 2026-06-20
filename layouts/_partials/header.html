@@ -20,26 +20,43 @@
     <div class="nav-actions">
 
       {{/* Language selector */}}
+      {{- $currentLang := site.Language.Lang -}}
+      {{- $currentName := site.Language.Label | default $currentLang -}}
+      {{- $languages := slice (dict "Lang" "zh-cn" "Label" "中文") (dict "Lang" "en" "Label" "English") -}}
       <div class="lang-switcher">
-        <button class="lang-current" id="language-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="language-menu" title="选择语言">
-          <span id="language-current-label">中文</span>
+        <button class="lang-current" id="language-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="language-menu" title="{{ if eq $currentLang "en" }}Select language{{ else }}选择语言{{ end }}">
+          <span id="language-current-label">{{ $currentName }}</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="lang-dropdown" id="language-menu" role="menu" aria-label="选择语言">
-          <button class="lang-option current" type="button" role="menuitemradio" aria-checked="true" data-lang="zh">中文</button>
-          <button class="lang-option" type="button" role="menuitemradio" aria-checked="false" data-lang="en">English</button>
-          <button class="lang-option" type="button" role="menuitemradio" aria-checked="false" data-lang="ja">日本語</button>
-          <button class="lang-option" type="button" role="menuitemradio" aria-checked="false" data-lang="es">Español</button>
+        <div class="lang-dropdown" id="language-menu" role="menu" aria-label="{{ if eq $currentLang "en" }}Select language{{ else }}选择语言{{ end }}">
+          {{ range $languages -}}
+            {{- $lang := . -}}
+            {{- $href := "" -}}
+            {{- range $.AllTranslations -}}
+              {{- if eq .Language.Lang $lang.Lang -}}
+                {{- $href = .RelPermalink -}}
+              {{- end -}}
+            {{- end -}}
+            {{- if not $href -}}
+              {{- if eq $lang.Lang "zh-cn" -}}
+                {{- $href = "/" | relURL -}}
+              {{- else -}}
+                {{- $href = printf "/%s/" $lang.Lang | relURL -}}
+              {{- end -}}
+            {{- end -}}
+            {{- $selected := eq $lang.Lang $currentLang -}}
+            <a class="lang-option{{ if $selected }} current{{ end }}" href="{{ $href }}" role="menuitemradio" aria-checked="{{ $selected }}"{{ if $selected }} aria-current="true"{{ end }} data-lang="{{ $lang.Lang }}">{{ $lang.Label | default $lang.Lang }}</a>
+          {{- end }}
         </div>
       </div>
 
       {{/* Dark/light toggle */}}
-      <button class="nav-btn" id="theme-toggle" aria-label="切换主题" title="切换主题">
+      <button class="nav-btn" id="theme-toggle" aria-label="{{ if eq $currentLang "en" }}Toggle theme{{ else }}切换主题{{ end }}" title="{{ if eq $currentLang "en" }}Toggle theme{{ else }}切换主题{{ end }}">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
 
       {{/* Mobile hamburger */}}
-      <button class="nav-btn nav-mobile-toggle" id="mobile-menu-toggle" aria-label="导航菜单" aria-expanded="false" aria-controls="nav-links">
+      <button class="nav-btn nav-mobile-toggle" id="mobile-menu-toggle" aria-label="{{ if eq $currentLang "en" }}Navigation menu{{ else }}导航菜单{{ end }}" aria-expanded="false" aria-controls="nav-links">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
 

@@ -1,22 +1,23 @@
 {{- $p := . -}}
+{{- $isEn := eq site.Language.Lang "en" -}}
 {{ if gt $p.TotalPages 1 -}}
-<nav class="pagination" aria-label="文章分页">
+<nav class="pagination" aria-label="{{ if $isEn }}Post pagination{{ else }}文章分页{{ end }}">
   {{ if $p.HasPrev -}}
-  <a href="{{ $p.Prev.URL }}" class="page-link page-link-wide" aria-label="较新文章">
+  <a href="{{ $p.Prev.URL }}" class="page-link page-link-wide" aria-label="{{ if $isEn }}Newer posts{{ else }}较新文章{{ end }}">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    较新
+    {{ if $isEn }}Newer{{ else }}较新{{ end }}
   </a>
   {{- end }}
 
   {{ range $p.Pagers -}}
-  <a href="{{ .URL }}" class="page-link{{ if eq .PageNumber $p.PageNumber }} active{{ end }}" aria-label="第 {{ .PageNumber }} 页">
+  <a href="{{ .URL }}" class="page-link{{ if eq .PageNumber $p.PageNumber }} active{{ end }}" aria-label="{{ if $isEn }}Page {{ .PageNumber }}{{ else }}第 {{ .PageNumber }} 页{{ end }}">
     {{ .PageNumber }}
   </a>
   {{- end }}
 
   {{ if $p.HasNext -}}
-  <a href="{{ $p.Next.URL }}" class="page-link page-link-wide" aria-label="较旧文章">
-    较旧
+  <a href="{{ $p.Next.URL }}" class="page-link page-link-wide" aria-label="{{ if $isEn }}Older posts{{ else }}较旧文章{{ end }}">
+    {{ if $isEn }}Older{{ else }}较旧{{ end }}
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
   </a>
   {{- end }}

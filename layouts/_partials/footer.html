@@ -1,4 +1,5 @@
 <footer class="site-footer">
+  {{- $isEn := eq site.Language.Lang "en" -}}
 
   <div class="container footer-body">
 
@@ -9,26 +10,26 @@
       <div class="footer-badges">
 
         {{/* Row 1 */}}
-        <a href="https://www.cloudflare.com" class="footer-badge footer-badge-cf" target="_blank" rel="noopener" aria-label="Cloudflare 全球加速">
+        <a href="https://www.cloudflare.com" class="footer-badge footer-badge-cf" target="_blank" rel="noopener" aria-label="{{ if $isEn }}Cloudflare acceleration{{ else }}Cloudflare 全球加速{{ end }}">
           <svg width="14" height="14" viewBox="0 0 100 100" fill="none" aria-hidden="true">
             <path d="M65.2 38.5c-.8-3.2-3.4-5.5-6.5-5.8-1-.1-2 .1-2.9.4C54.3 29.4 49.7 27 44.6 27c-9 0-16.3 7-16.8 15.8-4.3.8-7.6 4.6-7.6 9.2 0 5.2 4.2 9.4 9.4 9.4h34.8c4.6 0 8.3-3.7 8.3-8.3 0-4-2.9-7.4-6.9-8.2-.2-.8-.4-4.4-.6-6.4z" fill="#F6821F"/>
             <path d="M71.2 45.5c-.2-.8-.4-1.6-.8-2.3-1.4 .5-3 .6-4.6 .3 1.8 1.3 3 3.3 3.1 5.5h1.1c1.4 0 2.5-1.1 2.5-2.5 0-.4-.1-.7-.3-1z" fill="#FBAD41"/>
           </svg>
-          Cloudflare 全球加速
+          {{ if $isEn }}Cloudflare acceleration{{ else }}Cloudflare 全球加速{{ end }}
         </a>
-        <a href="https://gohugo.io" class="footer-badge footer-badge-hugo" target="_blank" rel="noopener" aria-label="Hugo 驱动">
+        <a href="https://gohugo.io" class="footer-badge footer-badge-hugo" target="_blank" rel="noopener" aria-label="{{ if $isEn }}Powered by Hugo{{ else }}Hugo 驱动{{ end }}">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          Hugo 驱动
+          {{ if $isEn }}Powered by Hugo{{ else }}Hugo 驱动{{ end }}
         </a>
 
         {{/* Row 2 */}}
-        <a href="https://fonts.adobe.com/fonts/source-han-serif" class="footer-badge footer-badge-adobe" target="_blank" rel="noopener" aria-label="采用思源宋体">
+        <a href="https://fonts.adobe.com/fonts/source-han-serif" class="footer-badge footer-badge-adobe" target="_blank" rel="noopener" aria-label="{{ if $isEn }}Source Han Serif{{ else }}采用思源宋体{{ end }}">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-          思源宋体 优化阅读体验
+          {{ if $isEn }}Source Han Serif{{ else }}思源宋体 优化阅读体验{{ end }}
         </a>
-        <a href="/posts/loveclaude-theme-intro/" class="footer-badge footer-badge-lc" aria-label="主题 LoveClaude">
+        <a href="/posts/loveclaude-theme-intro/" class="footer-badge footer-badge-lc" aria-label="{{ if $isEn }}LoveClaude theme{{ else }}主题 LoveClaude{{ end }}">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          主题 LoveClaude
+          {{ if $isEn }}LoveClaude theme{{ else }}主题 LoveClaude{{ end }}
         </a>
 
       </div>
@@ -36,7 +37,7 @@
 
     {{/* ── Col 2: Quick nav ── */}}
     <div class="footer-col">
-      <h4 class="footer-col-title">导航</h4>
+      <h4 class="footer-col-title">{{ if $isEn }}Navigation{{ else }}导航{{ end }}</h4>
       <nav class="footer-nav-list">
         {{ range site.Menus.main -}}
         <a href="{{ .URL }}" class="footer-nav-link">{{ .Name }}</a>
@@ -48,8 +49,8 @@
     {{ $friends := (where site.RegularPages "Section" "friends").ByDate.Reverse }}
     <div class="footer-col">
       <h4 class="footer-col-title">
-        友情链接
-        <a href="{{ "/friends/" | relLangURL }}" class="footer-col-more">全部 →</a>
+        {{ if $isEn }}Friends{{ else }}友情链接{{ end }}
+        <a href="{{ "/friends/" | relLangURL }}" class="footer-col-more">{{ if $isEn }}All{{ else }}全部{{ end }} →</a>
       </h4>
       <div class="footer-friends-list">
         {{ if $friends }}
@@ -60,7 +61,7 @@
           </a>
           {{ end }}
         {{ else }}
-          <span class="footer-friend-empty">暂无友链</span>
+          <span class="footer-friend-empty">{{ if $isEn }}No friends yet{{ else }}暂无友链{{ end }}</span>
         {{ end }}
       </div>
     </div>

@@ -18,40 +18,21 @@ function applyTheme(theme) {
   if (!btn) return;
   if (theme === 'dark') {
     btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-    btn.setAttribute('aria-label', '切换至亮色模式');
+    btn.setAttribute('aria-label', uiText('切换至亮色模式', 'Switch to light mode'));
   } else {
     btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-    btn.setAttribute('aria-label', '切换至暗色模式');
+    btn.setAttribute('aria-label', uiText('切换至暗色模式', 'Switch to dark mode'));
   }
 }
 
-/* ── Language selector / client-side translation ─────────────────── */
+/* ── Language selector / static language pages ───────────────────── */
 const LANGUAGE_KEY = 'loveclaude-language';
 const LANGUAGE_SOURCE_KEY = 'loveclaude-language-source';
+const DEFAULT_LANGUAGE = 'zh-cn';
 const LANGUAGES = {
-  zh: { label: '中文', htmlLang: 'zh-CN', translateCode: 'zh-CN' },
-  en: { label: 'English', htmlLang: 'en', translateCode: 'en' },
-  ja: { label: '日本語', htmlLang: 'ja', translateCode: 'ja' },
-  es: { label: 'Español', htmlLang: 'es', translateCode: 'es' },
+  'zh-cn': { label: '中文', htmlLang: 'zh-CN' },
+  en: { label: 'English', htmlLang: 'en-US' },
 };
-const LANGUAGE_SKIP_SELECTOR = [
-  'script',
-  'style',
-  'svg',
-  'code',
-  'pre',
-  'textarea',
-  'input',
-  'select',
-  'option',
-  '.lang-switcher',
-  '[data-no-translate]',
-].join(',');
-const TRANSLATABLE_ATTRIBUTES = ['title', 'aria-label', 'placeholder', 'alt'];
-const TRANSLATION_ENDPOINT = 'https://translate.googleapis.com/translate_a/single';
-const translationCache = new Map();
-let originalLanguageContent = null;
-let currentLanguage = 'zh';
 
 function normalizeLanguageCode(value) {
   return String(value || '').trim().toLowerCase();
@@ -60,11 +41,15 @@ function normalizeLanguageCode(value) {
 function languageFromCode(value) {
   const code = normalizeLanguageCode(value);
   if (!code) return null;
-  if (code.startsWith('zh')) return 'zh';
+  if (code.startsWith('zh')) return 'zh-cn';
   if (code.startsWith('en')) return 'en';
-  if (code.startsWith('ja')) return 'ja';
-  if (code.startsWith('es')) return 'es';
   return null;
+}
+
+function normalizeSiteLanguage(value) {
+  const code = normalizeLanguageCode(value);
+  if (LANGUAGES[code]) return code;
+  return languageFromCode(code);
 }
 
 function detectBrowserLanguage(languageList) {
@@ -80,9 +65,9 @@ function detectBrowserLanguage(languageList) {
 
 function resolveLanguagePreference(options = {}) {
   const storage = options.storage || localStorage;
-  const saved = storage.getItem(LANGUAGE_KEY);
+  const saved = normalizeSiteLanguage(storage.getItem(LANGUAGE_KEY));
   const savedSource = storage.getItem(LANGUAGE_SOURCE_KEY);
-  if (saved && LANGUAGES[saved] && (saved !== 'zh' || savedSource === 'manual')) {
+  if (saved && savedSource === 'manual') {
     return { language: saved, source: 'saved' };
   }
 
@@ -90,200 +75,54 @@ function resolveLanguagePreference(options = {}) {
   return { language: detectBrowserLanguage(languageList), source: 'browser' };
 }
 
-function setDocumentLanguage(language) {
-  const meta = LANGUAGES[language] || LANGUAGES.zh;
-  document.documentElement.lang = meta.htmlLang;
-  document.documentElement.setAttribute('lang', meta.htmlLang);
+function pageLanguageFromDocument() {
+  return normalizeSiteLanguage(
+    document.documentElement.lang || document.documentElement.getAttribute('lang')
+  ) || DEFAULT_LANGUAGE;
+}
+
+function uiText(zhText, enText) {
+  return pageLanguageFromDocument() === 'en' ? enText : zhText;
 }
 
 function setLanguageUI(language) {
-  const active = LANGUAGES[language] ? language : 'zh';
+  const active = normalizeSiteLanguage(language) || DEFAULT_LANGUAGE;
   const label = document.getElementById('language-current-label');
   const toggle = document.getElementById('language-toggle');
   if (label) label.textContent = LANGUAGES[active].label;
   if (toggle) {
-    toggle.setAttribute('title', `选择语言：${LANGUAGES[active].label}`);
-    toggle.setAttribute('aria-label', `当前语言：${LANGUAGES[active].label}`);
+    const isEnglish = active === 'en';
+    toggle.setAttribute('title', isEnglish ? `Language: ${LANGUAGES[active].label}` : `选择语言：${LANGUAGES[active].label}`);
+    toggle.setAttribute('aria-label', isEnglish ? `Current language: ${LANGUAGES[active].label}` : `当前语言：${LANGUAGES[active].label}`);
   }
 
   document.querySelectorAll('.lang-option').forEach(option => {
-    const selected = option.dataset.lang === active;
+    const selected = normalizeSiteLanguage(option.dataset.lang) === active;
     option.classList.toggle('current', selected);
     option.setAttribute('aria-checked', String(selected));
+    if (selected) option.setAttribute('aria-current', 'true');
+    else option.removeAttribute('aria-current');
   });
 }
 
-function captureOriginalContent() {
-  if (originalLanguageContent) return originalLanguageContent;
-
-  const main = document.querySelector('main.main');
-  originalLanguageContent = {
-    title: document.title,
-    htmlLang: document.documentElement.lang || document.documentElement.getAttribute('lang') || 'zh-CN',
-    mainHTML: main?.innerHTML || '',
-    textRecords: [],
-    attrRecords: [],
-  };
-
-  collectTranslatableTextNodes().forEach(node => {
-    originalLanguageContent.textRecords.push({ node, value: node.nodeValue });
-  });
-
-  collectTranslatableAttributeNodes().forEach(record => {
-    originalLanguageContent.attrRecords.push({
-      element: record.element,
-      attr: record.attr,
-      value: record.value,
-    });
-  });
-
-  return originalLanguageContent;
+function findLanguageLink(language) {
+  const target = normalizeSiteLanguage(language);
+  if (!target) return null;
+  return document.querySelector(`.lang-option[data-lang="${target}"]`);
 }
 
-function restoreOriginalContent() {
-  const original = captureOriginalContent();
-  document.title = original.title;
-  document.documentElement.lang = original.htmlLang;
-  document.documentElement.setAttribute('lang', original.htmlLang);
+function maybeRedirectToPreferredLanguage(preference) {
+  const current = pageLanguageFromDocument();
+  const target = normalizeSiteLanguage(preference?.language);
+  if (!target || target === current || current !== DEFAULT_LANGUAGE) return false;
 
-  if (original.textRecords.length) {
-    original.textRecords.forEach(record => {
-      record.node.nodeValue = record.value;
-    });
-  } else {
-    const main = document.querySelector('main.main');
-    if (main) main.innerHTML = original.mainHTML;
-  }
+  const link = findLanguageLink(target);
+  const href = link?.href || link?.getAttribute?.('href');
+  if (!href) return false;
 
-  original.attrRecords.forEach(record => {
-    record.element.setAttribute(record.attr, record.value);
-  });
-}
-
-function shouldSkipTranslationElement(element) {
-  return Boolean(element?.closest?.(LANGUAGE_SKIP_SELECTOR));
-}
-
-function collectTranslatableTextNodes(root = document.body) {
-  if (!document.createTreeWalker || !root) return [];
-
-  const nodes = [];
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-    acceptNode(node) {
-      if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-      if (shouldSkipTranslationElement(node.parentElement)) return NodeFilter.FILTER_REJECT;
-      return NodeFilter.FILTER_ACCEPT;
-    },
-  });
-
-  while (walker.nextNode()) nodes.push(walker.currentNode);
-  return nodes;
-}
-
-function collectTranslatableAttributeNodes() {
-  const records = [];
-  TRANSLATABLE_ATTRIBUTES.forEach(attr => {
-    document.querySelectorAll(`[${attr}]`).forEach(element => {
-      if (shouldSkipTranslationElement(element)) return;
-      const value = element.getAttribute(attr);
-      if (!value || !value.trim()) return;
-      records.push({ element, attr, value });
-    });
-  });
-  return records;
-}
-
-function splitTextWhitespace(text) {
-  const leading = text.match(/^\s*/)?.[0] || '';
-  const trailing = text.match(/\s*$/)?.[0] || '';
-  return { leading, core: text.trim(), trailing };
-}
-
-function parseGoogleTranslateResponse(data) {
-  if (!Array.isArray(data?.[0])) return '';
-  return data[0].map(part => part?.[0] || '').join('');
-}
-
-async function translateText(text, targetLanguage) {
-  const { leading, core, trailing } = splitTextWhitespace(text);
-  if (!core || targetLanguage === 'zh') return text;
-
-  const cacheKey = `${targetLanguage}:${core}`;
-  if (!translationCache.has(cacheKey)) {
-    const target = LANGUAGES[targetLanguage].translateCode;
-    const url = TRANSLATION_ENDPOINT
-      + `?client=gtx&sl=zh-CN&tl=${encodeURIComponent(target)}&dt=t&q=${encodeURIComponent(core)}`;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Translation failed: ${response.status}`);
-    const translated = parseGoogleTranslateResponse(await response.json()) || core;
-    translationCache.set(cacheKey, translated);
-  }
-
-  return `${leading}${translationCache.get(cacheKey)}${trailing}`;
-}
-
-async function translateRecords(records, targetLanguage) {
-  const uniqueValues = [...new Set(records.map(record => record.value).filter(Boolean))];
-  const translated = new Map();
-  for (const value of uniqueValues) {
-    translated.set(value, await translateText(value, targetLanguage));
-  }
-  records.forEach(record => {
-    if ('node' in record) record.node.nodeValue = translated.get(record.value) || record.value;
-    else record.element.setAttribute(record.attr, translated.get(record.value) || record.value);
-  });
-}
-
-async function translatePageTo(language) {
-  const original = captureOriginalContent();
-  const textRecords = collectTranslatableTextNodes().map(node => ({
-    node,
-    value: node.nodeValue,
-  }));
-  const attrRecords = collectTranslatableAttributeNodes();
-  document.title = await translateText(original.title, language);
-  await translateRecords(textRecords, language);
-  await translateRecords(attrRecords, language);
-}
-
-async function applyLanguage(language, options = {}) {
-  const target = LANGUAGES[language] ? language : 'zh';
-  const shouldPersist = options.persist === true;
-  captureOriginalContent();
-  setLanguageUI(target);
-  setDocumentLanguage(target);
-  currentLanguage = target;
-  if (shouldPersist) {
-    localStorage.setItem(LANGUAGE_KEY, target);
-    localStorage.setItem(LANGUAGE_SOURCE_KEY, 'manual');
-  }
-
-  if (target === 'zh') {
-    restoreOriginalContent();
-    setLanguageUI('zh');
-    setDocumentLanguage('zh');
-    currentLanguage = 'zh';
-    return true;
-  }
-
-  document.body.classList.add('translating');
-  try {
-    restoreOriginalContent();
-    setDocumentLanguage(target);
-    await translatePageTo(target);
-    setLanguageUI(target);
-    currentLanguage = target;
-    return true;
-  } catch (error) {
-    console.warn('Language translation failed:', error);
-    restoreOriginalContent();
-    setLanguageUI('zh');
-    setDocumentLanguage('zh');
-    currentLanguage = 'zh';
-    return false;
-  } finally {
-    document.body.classList.remove('translating');
-  }
+  if (typeof window.location.replace === 'function') window.location.replace(href);
+  else window.location.href = href;
+  return true;
 }
 
 function initLanguageSwitcher() {
@@ -309,9 +148,12 @@ function initLanguageSwitcher() {
   document.querySelectorAll('.lang-option').forEach(option => {
     option.addEventListener('click', event => {
       event.stopPropagation();
-      const language = option.dataset.lang;
+      const language = normalizeSiteLanguage(option.dataset.lang);
+      if (!language) return;
+      localStorage.setItem(LANGUAGE_KEY, language);
+      localStorage.setItem(LANGUAGE_SOURCE_KEY, 'manual');
+      setLanguageUI(language);
       closeMenu();
-      applyLanguage(language, { persist: true });
     });
   });
 
@@ -323,9 +165,8 @@ function initLanguageSwitcher() {
     if (event.key === 'Escape') closeMenu();
   });
 
-  const preference = resolveLanguagePreference();
-  setLanguageUI(preference.language);
-  applyLanguage(preference.language, { persist: false });
+  setLanguageUI(pageLanguageFromDocument());
+  maybeRedirectToPreferredLanguage(resolveLanguagePreference());
 }
 
 /* ── Particle canvas animation ───────────────────────────────────── */
@@ -528,7 +369,7 @@ function initCodeCopy() {
   document.querySelectorAll('.post-content pre').forEach(pre => {
     const btn = document.createElement('button');
     btn.className = 'code-copy';
-    btn.setAttribute('aria-label', '复制代码');
+    btn.setAttribute('aria-label', uiText('复制代码', 'Copy code'));
     btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
     pre.appendChild(btn);
 
@@ -653,25 +494,27 @@ function renderBlogPagination(pagination, totalPages) {
   if (totalPages <= 1) return;
 
   if (blogCurrentPage > 1) {
-    pagination.append(makeBlogPageButton('较新', blogCurrentPage - 1, {
+    const newerText = uiText('较新', 'Newer');
+    pagination.append(makeBlogPageButton(newerText, blogCurrentPage - 1, {
       wide: true,
-      label: '较新文章',
-      html: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg><span>较新</span>',
+      label: uiText('较新文章', 'Newer posts'),
+      html: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg><span>${newerText}</span>`,
     }));
   }
 
   for (let page = 1; page <= totalPages; page++) {
     pagination.append(makeBlogPageButton(String(page), page, {
       active: page === blogCurrentPage,
-      label: `第 ${page} 页`,
+      label: uiText(`第 ${page} 页`, `Page ${page}`),
     }));
   }
 
   if (blogCurrentPage < totalPages) {
-    pagination.append(makeBlogPageButton('较旧', blogCurrentPage + 1, {
+    const olderText = uiText('较旧', 'Older');
+    pagination.append(makeBlogPageButton(olderText, blogCurrentPage + 1, {
       wide: true,
-      label: '较旧文章',
-      html: '<span>较旧</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>',
+      label: uiText('较旧文章', 'Older posts'),
+      html: `<span>${olderText}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>`,
     }));
   }
 }

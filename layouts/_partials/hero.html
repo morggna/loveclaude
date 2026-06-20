@@ -1,4 +1,5 @@
 <section class="hero">
+  {{- $isEn := eq site.Language.Lang "en" -}}
 
   {{/* Ambient orbs — slow-drifting blurred lights behind the canvas */}}
   <div class="hero-orb hero-orb-1" aria-hidden="true"></div>
@@ -18,10 +19,10 @@
       </p>
       <div class="hero-actions">
         <a href="#tree-root" class="btn btn-primary" id="hero-browse">
-          浏览文章
+          {{ if $isEn }}Browse posts{{ else }}浏览文章{{ end }}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="5 12 12 19 19 12"/></svg>
         </a>
-        <a href="{{ "/about/" | relLangURL }}" class="btn btn-outline">关于我</a>
+        <a href="{{ "/about/" | relLangURL }}" class="btn btn-outline">{{ if $isEn }}About{{ else }}关于我{{ end }}</a>
       </div>
     </div>
 

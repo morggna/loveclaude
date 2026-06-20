@@ -1,4 +1,5 @@
 {{ define "main" }}
+{{- $isEn := eq site.Language.Lang "en" -}}
 
 {{/* ── Blog hero — two-column: title left, animated categories right ── */}}
 <div class="list-hero">
@@ -12,7 +13,7 @@
       </div>
 
       {{ if and (eq .Kind "section") site.Taxonomies.categories -}}
-      <nav class="hero-categories list-hero-cats" aria-label="按分类浏览">
+      <nav class="hero-categories list-hero-cats" aria-label="{{ if $isEn }}Browse by category{{ else }}按分类浏览{{ end }}">
         {{ range $name, $pages := site.Taxonomies.categories -}}
         <a href="{{ "/categories/" | relLangURL }}{{ $name | urlize }}/" class="hero-cat-link">
           <span>{{ $name }}</span>
@@ -33,13 +34,13 @@
   <div class="blog-layout">
 
     {{/* Left sidebar */}}
-    <aside class="blog-sidebar" aria-label="筛选">
-      <p class="sidebar-heading">筛选</p>
+    <aside class="blog-sidebar" aria-label="{{ if $isEn }}Filters{{ else }}筛选{{ end }}">
+      <p class="sidebar-heading">{{ if $isEn }}Filters{{ else }}筛选{{ end }}</p>
 
       {{ if site.Taxonomies.categories -}}
       <div class="filter-section">
         <button class="filter-toggle open" aria-expanded="true">
-          分类
+          {{ if $isEn }}Categories{{ else }}分类{{ end }}
           <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <ul class="filter-list open">
@@ -57,7 +58,7 @@
       {{ if site.Taxonomies.tags -}}
       <div class="filter-section">
         <button class="filter-toggle" aria-expanded="false">
-          标签
+          {{ if $isEn }}Tags{{ else }}标签{{ end }}
           <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <ul class="filter-list">
@@ -79,13 +80,13 @@
       <div class="blog-toolbar">
         <div class="search-wrap">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="search" id="blog-search" class="search-input" placeholder="搜索文章…" autocomplete="off">
+          <input type="search" id="blog-search" class="search-input" placeholder="{{ if $isEn }}Search posts...{{ else }}搜索文章…{{ end }}" autocomplete="off">
         </div>
-        <div class="view-toggle" role="group" aria-label="视图">
-          <button class="view-btn" data-view="grid" aria-label="网格视图">
+        <div class="view-toggle" role="group" aria-label="{{ if $isEn }}View{{ else }}视图{{ end }}">
+          <button class="view-btn" data-view="grid" aria-label="{{ if $isEn }}Grid view{{ else }}网格视图{{ end }}">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           </button>
-          <button class="view-btn" data-view="list" aria-label="列表视图">
+          <button class="view-btn" data-view="list" aria-label="{{ if $isEn }}List view{{ else }}列表视图{{ end }}">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           </button>
         </div>
@@ -99,9 +100,9 @@
           {{- partial "post-card.html" . -}}
         {{- end }}
       </div>
-      <nav class="pagination blog-pagination" data-page-size="{{ $pageSize }}" aria-label="文章分页" hidden></nav>
+      <nav class="pagination blog-pagination" data-page-size="{{ $pageSize }}" aria-label="{{ if $isEn }}Post pagination{{ else }}文章分页{{ end }}" hidden></nav>
       {{- else -}}
-      <div class="empty-state"><p>暂无文章。</p></div>
+      <div class="empty-state"><p>{{ if $isEn }}No posts yet.{{ else }}暂无文章。{{ end }}</p></div>
       {{- end }}
 
     </div>
@@ -118,7 +119,7 @@
   </div>
   {{- partial "pagination.html" $paginator -}}
   {{- else -}}
-  <div class="empty-state"><p>该分类下暂无文章。</p></div>
+  <div class="empty-state"><p>{{ if $isEn }}No posts in this category yet.{{ else }}该分类下暂无文章。{{ end }}</p></div>
   {{- end }}
   {{- end }}
 

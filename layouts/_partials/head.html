@@ -66,6 +66,10 @@
 
 {{/* Canonical & RSS */}}
 <link rel="canonical" href="{{ .Permalink }}">
+{{ range .AllTranslations -}}
+<link rel="alternate" hreflang="{{ .Language.Locale | default .Language.Lang }}" href="{{ .Permalink }}">
+{{- end }}
+<link rel="alternate" hreflang="x-default" href="{{ "/" | absURL }}">
 {{ range .AlternativeOutputFormats -}}
 <link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink }}">
 {{- end }}

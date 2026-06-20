@@ -1,4 +1,5 @@
 {{ define "main" }}
+{{- $isEn := eq site.Language.Lang "en" -}}
 {{- partial "hero.html" . -}}
 
 {{/* ── Life tree: all posts, newest at top (crown), oldest at bottom (roots) ── */}}
@@ -18,9 +19,9 @@
   <div class="container">
 
     <div class="ltree-hd">
-      <span class="ltree-eyebrow">成长轨迹</span>
-      <h2 class="ltree-title">文字，是一棵树</h2>
-      <p class="ltree-subtitle">从最初的一行字，到如今枝繁叶茂</p>
+      <span class="ltree-eyebrow">{{ if $isEn }}TIMELINE{{ else }}成长轨迹{{ end }}</span>
+      <h2 class="ltree-title">{{ if $isEn }}Words grow like a tree{{ else }}文字，是一棵树{{ end }}</h2>
+      <p class="ltree-subtitle">{{ if $isEn }}From the first note to a canopy of posts{{ else }}从最初的一行字，到如今枝繁叶茂{{ end }}</p>
     </div>
 
     <div class="ltree" id="ltree">
@@ -35,7 +36,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M12 22V12M12 12C12 12 7 8 7 4.5a5 5 0 0 1 10 0C17 8 12 12 12 12z"/>
         </svg>
-        <span>最新</span>
+        <span>{{ if $isEn }}Latest{{ else }}最新{{ end }}</span>
       </div>
 
       {{/* Articles: newest → oldest, top → bottom */}}
@@ -68,9 +69,9 @@
       {{ end }}
 
       {{/* Root marker — bottom of tree (oldest / 起点) */}}
-      <div class="ltree-root-mark" id="tree-root" aria-label="起点">
+      <div class="ltree-root-mark" id="tree-root" aria-label="{{ if $isEn }}Start{{ else }}起点{{ end }}">
         <div class="ltree-root-dot" aria-hidden="true"></div>
-        <span class="ltree-root-label">起点</span>
+        <span class="ltree-root-label">{{ if $isEn }}Start{{ else }}起点{{ end }}</span>
       </div>
 
     </div>{{/* end .ltree */}}
@@ -78,10 +79,10 @@
     <div class="ltree-cta">
       <p class="ltree-cta-hint" aria-hidden="true">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-        向上滑动，探索文章
+        {{ if $isEn }}Scroll up to explore posts{{ else }}向上滑动，探索文章{{ end }}
       </p>
       <a href="{{ "/posts/" | relLangURL }}" class="btn btn-outline">
-        查看更多文章
+        {{ if $isEn }}More posts{{ else }}查看更多文章{{ end }}
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
     </div>
