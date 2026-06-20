@@ -456,6 +456,7 @@ function makeBlogPageButton(label, page, options = {}) {
     if (page === blogCurrentPage) return;
     blogCurrentPage = page;
     filterPosts({ resetPage: false });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
   return button;
 }
