@@ -19,6 +19,20 @@
 
     <div class="nav-actions">
 
+      {{/* Language selector */}}
+      <div class="lang-switcher">
+        <button class="lang-current" id="language-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="language-menu" title="选择语言">
+          <span id="language-current-label">中文</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="lang-dropdown" id="language-menu" role="menu" aria-label="选择语言">
+          <button class="lang-option current" type="button" role="menuitemradio" aria-checked="true" data-lang="zh">中文</button>
+          <button class="lang-option" type="button" role="menuitemradio" aria-checked="false" data-lang="en">English</button>
+          <button class="lang-option" type="button" role="menuitemradio" aria-checked="false" data-lang="ja">日本語</button>
+          <button class="lang-option" type="button" role="menuitemradio" aria-checked="false" data-lang="es">Español</button>
+        </div>
+      </div>
+
       {{/* Dark/light toggle */}}
       <button class="nav-btn" id="theme-toggle" aria-label="切换主题" title="切换主题">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>

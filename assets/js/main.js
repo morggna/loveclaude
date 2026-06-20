@@ -25,6 +25,303 @@ function applyTheme(theme) {
   }
 }
 
+/* ── Language selector / client-side translation ─────────────────── */
+const LANGUAGE_KEY = 'loveclaude-language';
+const LANGUAGES = {
+  zh: { label: '中文', htmlLang: 'zh-CN', translateCode: 'zh-CN' },
+  en: { label: 'English', htmlLang: 'en', translateCode: 'en' },
+  ja: { label: '日本語', htmlLang: 'ja', translateCode: 'ja' },
+  es: { label: 'Español', htmlLang: 'es', translateCode: 'es' },
+};
+const LANGUAGE_SKIP_SELECTOR = [
+  'script',
+  'style',
+  'svg',
+  'code',
+  'pre',
+  'textarea',
+  'input',
+  'select',
+  'option',
+  '.lang-switcher',
+  '[data-no-translate]',
+].join(',');
+const TRANSLATABLE_ATTRIBUTES = ['title', 'aria-label', 'placeholder', 'alt'];
+const TRANSLATION_ENDPOINT = '/api/translate';
+const translationCache = new Map();
+let originalLanguageContent = null;
+let currentLanguage = 'zh';
+
+function normalizeLanguageCode(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function languageFromCode(value) {
+  const code = normalizeLanguageCode(value);
+  if (!code) return null;
+  if (code.startsWith('zh')) return 'zh';
+  if (code.startsWith('en')) return 'en';
+  if (code.startsWith('ja')) return 'ja';
+  if (code.startsWith('es')) return 'es';
+  return null;
+}
+
+function detectBrowserLanguage(languageList) {
+  const candidates = Array.isArray(languageList) && languageList.length
+    ? languageList
+    : [navigator.language].filter(Boolean);
+  for (const candidate of candidates) {
+    const lang = languageFromCode(candidate);
+    if (lang) return lang;
+  }
+  return 'zh';
+}
+
+function resolveLanguagePreference(options = {}) {
+  const storage = options.storage || localStorage;
+  const saved = storage.getItem(LANGUAGE_KEY);
+  if (saved && LANGUAGES[saved]) return { language: saved, source: 'saved' };
+
+  const languageList = options.languages || navigator.languages || [navigator.language];
+  return { language: detectBrowserLanguage(languageList), source: 'browser' };
+}
+
+function setDocumentLanguage(language) {
+  const meta = LANGUAGES[language] || LANGUAGES.zh;
+  document.documentElement.lang = meta.htmlLang;
+  document.documentElement.setAttribute('lang', meta.htmlLang);
+}
+
+function setLanguageUI(language) {
+  const active = LANGUAGES[language] ? language : 'zh';
+  const label = document.getElementById('language-current-label');
+  const toggle = document.getElementById('language-toggle');
+  if (label) label.textContent = LANGUAGES[active].label;
+  if (toggle) {
+    toggle.setAttribute('title', `选择语言：${LANGUAGES[active].label}`);
+    toggle.setAttribute('aria-label', `当前语言：${LANGUAGES[active].label}`);
+  }
+
+  document.querySelectorAll('.lang-option').forEach(option => {
+    const selected = option.dataset.lang === active;
+    option.classList.toggle('current', selected);
+    option.setAttribute('aria-checked', String(selected));
+  });
+}
+
+function captureOriginalContent() {
+  if (originalLanguageContent) return originalLanguageContent;
+
+  const main = document.querySelector('main.main');
+  originalLanguageContent = {
+    title: document.title,
+    htmlLang: document.documentElement.lang || document.documentElement.getAttribute('lang') || 'zh-CN',
+    mainHTML: main?.innerHTML || '',
+    textRecords: [],
+    attrRecords: [],
+  };
+
+  collectTranslatableTextNodes().forEach(node => {
+    originalLanguageContent.textRecords.push({ node, value: node.nodeValue });
+  });
+
+  collectTranslatableAttributeNodes().forEach(record => {
+    originalLanguageContent.attrRecords.push({
+      element: record.element,
+      attr: record.attr,
+      value: record.value,
+    });
+  });
+
+  return originalLanguageContent;
+}
+
+function restoreOriginalContent() {
+  const original = captureOriginalContent();
+  document.title = original.title;
+  document.documentElement.lang = original.htmlLang;
+  document.documentElement.setAttribute('lang', original.htmlLang);
+
+  if (original.textRecords.length) {
+    original.textRecords.forEach(record => {
+      record.node.nodeValue = record.value;
+    });
+  } else {
+    const main = document.querySelector('main.main');
+    if (main) main.innerHTML = original.mainHTML;
+  }
+
+  original.attrRecords.forEach(record => {
+    record.element.setAttribute(record.attr, record.value);
+  });
+}
+
+function shouldSkipTranslationElement(element) {
+  return Boolean(element?.closest?.(LANGUAGE_SKIP_SELECTOR));
+}
+
+function collectTranslatableTextNodes(root = document.body) {
+  if (!document.createTreeWalker || !root) return [];
+
+  const nodes = [];
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      if (shouldSkipTranslationElement(node.parentElement)) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    },
+  });
+
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  return nodes;
+}
+
+function collectTranslatableAttributeNodes() {
+  const records = [];
+  TRANSLATABLE_ATTRIBUTES.forEach(attr => {
+    document.querySelectorAll(`[${attr}]`).forEach(element => {
+      if (shouldSkipTranslationElement(element)) return;
+      const value = element.getAttribute(attr);
+      if (!value || !value.trim()) return;
+      records.push({ element, attr, value });
+    });
+  });
+  return records;
+}
+
+function splitTextWhitespace(text) {
+  const leading = text.match(/^\s*/)?.[0] || '';
+  const trailing = text.match(/\s*$/)?.[0] || '';
+  return { leading, core: text.trim(), trailing };
+}
+
+function parseGoogleTranslateResponse(data) {
+  if (!Array.isArray(data?.[0])) return '';
+  return data[0].map(part => part?.[0] || '').join('');
+}
+
+async function translateText(text, targetLanguage) {
+  const { leading, core, trailing } = splitTextWhitespace(text);
+  if (!core || targetLanguage === 'zh') return text;
+
+  const cacheKey = `${targetLanguage}:${core}`;
+  if (!translationCache.has(cacheKey)) {
+    const target = LANGUAGES[targetLanguage].translateCode;
+    const url = TRANSLATION_ENDPOINT
+      + `?client=gtx&sl=zh-CN&tl=${encodeURIComponent(target)}&dt=t&q=${encodeURIComponent(core)}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Translation failed: ${response.status}`);
+    const translated = parseGoogleTranslateResponse(await response.json()) || core;
+    translationCache.set(cacheKey, translated);
+  }
+
+  return `${leading}${translationCache.get(cacheKey)}${trailing}`;
+}
+
+async function translateRecords(records, targetLanguage) {
+  const uniqueValues = [...new Set(records.map(record => record.value).filter(Boolean))];
+  const translated = new Map();
+  for (const value of uniqueValues) {
+    translated.set(value, await translateText(value, targetLanguage));
+  }
+  records.forEach(record => {
+    if ('node' in record) record.node.nodeValue = translated.get(record.value) || record.value;
+    else record.element.setAttribute(record.attr, translated.get(record.value) || record.value);
+  });
+}
+
+async function translatePageTo(language) {
+  const original = captureOriginalContent();
+  const textRecords = collectTranslatableTextNodes().map(node => ({
+    node,
+    value: node.nodeValue,
+  }));
+  const attrRecords = collectTranslatableAttributeNodes();
+  document.title = await translateText(original.title, language);
+  await translateRecords(textRecords, language);
+  await translateRecords(attrRecords, language);
+}
+
+async function applyLanguage(language, options = {}) {
+  const target = LANGUAGES[language] ? language : 'zh';
+  const shouldPersist = options.persist === true;
+  captureOriginalContent();
+  setLanguageUI(target);
+  setDocumentLanguage(target);
+  currentLanguage = target;
+  if (shouldPersist) localStorage.setItem(LANGUAGE_KEY, target);
+
+  if (target === 'zh') {
+    restoreOriginalContent();
+    setLanguageUI('zh');
+    setDocumentLanguage('zh');
+    currentLanguage = 'zh';
+    return true;
+  }
+
+  document.body.classList.add('translating');
+  try {
+    restoreOriginalContent();
+    setDocumentLanguage(target);
+    await translatePageTo(target);
+    setLanguageUI(target);
+    currentLanguage = target;
+    return true;
+  } catch (error) {
+    console.warn('Language translation failed:', error);
+    restoreOriginalContent();
+    setLanguageUI('zh');
+    setDocumentLanguage('zh');
+    currentLanguage = 'zh';
+    if (shouldPersist) localStorage.setItem(LANGUAGE_KEY, 'zh');
+    return false;
+  } finally {
+    document.body.classList.remove('translating');
+  }
+}
+
+function initLanguageSwitcher() {
+  const toggle = document.getElementById('language-toggle');
+  const menu = document.getElementById('language-menu');
+  const switcher = document.querySelector('.lang-switcher');
+  if (!toggle || !menu || !switcher) return;
+
+  const closeMenu = () => {
+    menu.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  };
+  const openMenu = () => {
+    menu.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+  };
+
+  toggle.addEventListener('click', event => {
+    event.stopPropagation();
+    menu.classList.contains('open') ? closeMenu() : openMenu();
+  });
+
+  document.querySelectorAll('.lang-option').forEach(option => {
+    option.addEventListener('click', event => {
+      event.stopPropagation();
+      const language = option.dataset.lang;
+      closeMenu();
+      applyLanguage(language, { persist: true });
+    });
+  });
+
+  document.addEventListener('click', event => {
+    if (!switcher.contains(event.target)) closeMenu();
+  }, { passive: true });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeMenu();
+  });
+
+  const preference = resolveLanguagePreference();
+  setLanguageUI(preference.language);
+  applyLanguage(preference.language, { persist: false });
+}
+
 /* ── Particle canvas animation ───────────────────────────────────── */
 class Particles {
   constructor(canvas) {
@@ -266,6 +563,7 @@ function initTocHighlight() {
 /* ── Blog: search, view-toggle, filter ───────────────────────────── */
 const VIEW_KEY = 'loveclaude-view';
 const MOBILE_VIEW_QUERY = '(max-width: 760px)';
+let blogCurrentPage = 1;
 
 function resolvePostView() {
   const saved = localStorage.getItem(VIEW_KEY);
@@ -282,32 +580,127 @@ function setView(view) {
   });
 }
 
-function filterPosts() {
+function getActiveBlogFilters() {
   const query = (document.getElementById('blog-search')?.value || '').trim().toLowerCase();
   const activeCats = [...document.querySelectorAll('.filter-option.active[data-category]')]
-    .map(el => el.dataset.category.toLowerCase());
+    .map(el => (el.dataset.category || '').toLowerCase())
+    .filter(Boolean);
   const activeTags = [...document.querySelectorAll('.filter-option.active[data-tag]')]
-    .map(el => el.dataset.tag.toLowerCase());
+    .map(el => (el.dataset.tag || '').toLowerCase())
+    .filter(Boolean);
 
-  document.querySelectorAll('#posts-grid .post-card').forEach(card => {
-    const title = (card.dataset.title || '').toLowerCase();
-    const desc  = (card.dataset.description || '').toLowerCase();
-    const cats  = (card.dataset.categories || '').toLowerCase().split(',').filter(Boolean);
-    const tags  = (card.dataset.tags || '').toLowerCase().split(',').filter(Boolean);
+  return { query, activeCats, activeTags };
+}
 
-    // Search matches if query appears in title, description, tags, OR categories
-    const okSearch = !query
-      || title.includes(query)
-      || desc.includes(query)
-      || tags.some(t => t.includes(query))
-      || cats.some(c => c.includes(query));
+function postMatchesBlogFilters(card, filters) {
+  const title = (card.dataset.title || '').toLowerCase();
+  const desc  = (card.dataset.description || '').toLowerCase();
+  const cats  = (card.dataset.categories || '').toLowerCase().split(',').filter(Boolean);
+  const tags  = (card.dataset.tags || '').toLowerCase().split(',').filter(Boolean);
 
-    // Category/tag filters are independent of search and work simultaneously
-    const okCat = activeCats.length === 0 || activeCats.some(c => cats.includes(c));
-    const okTag = activeTags.length === 0 || activeTags.some(t => tags.includes(t));
+  // Search matches if query appears in title, description, tags, OR categories
+  const okSearch = !filters.query
+    || title.includes(filters.query)
+    || desc.includes(filters.query)
+    || tags.some(t => t.includes(filters.query))
+    || cats.some(c => c.includes(filters.query));
 
-    card.hidden = !(okSearch && okCat && okTag);
+  // Category/tag filters are independent of search and work simultaneously
+  const okCat = filters.activeCats.length === 0 || filters.activeCats.some(c => cats.includes(c));
+  const okTag = filters.activeTags.length === 0 || filters.activeTags.some(t => tags.includes(t));
+
+  return okSearch && okCat && okTag;
+}
+
+function getBlogPageSize(grid, pagination, fallback) {
+  const raw = grid?.dataset?.pageSize || pagination?.dataset?.pageSize || '';
+  const parsed = Number.parseInt(raw, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : Math.max(fallback, 1);
+}
+
+function makeBlogPageButton(label, page, options = {}) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.classList.add('page-link');
+  if (options.wide) button.classList.add('page-link-wide');
+  if (options.active) {
+    button.classList.add('active');
+    button.setAttribute('aria-current', 'page');
+  }
+  if (options.label) button.setAttribute('aria-label', options.label);
+  button.innerHTML = options.html || '';
+  if (!options.html) button.textContent = label;
+  button.addEventListener('click', () => {
+    if (page === blogCurrentPage) return;
+    blogCurrentPage = page;
+    filterPosts({ resetPage: false });
   });
+  return button;
+}
+
+function renderBlogPagination(pagination, totalPages) {
+  if (!pagination) return;
+  if (typeof pagination.replaceChildren === 'function') pagination.replaceChildren();
+  else pagination.innerHTML = '';
+
+  pagination.hidden = totalPages <= 1;
+  if (totalPages <= 1) return;
+
+  if (blogCurrentPage > 1) {
+    pagination.append(makeBlogPageButton('较新', blogCurrentPage - 1, {
+      wide: true,
+      label: '较新文章',
+      html: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg><span>较新</span>',
+    }));
+  }
+
+  for (let page = 1; page <= totalPages; page++) {
+    pagination.append(makeBlogPageButton(String(page), page, {
+      active: page === blogCurrentPage,
+      label: `第 ${page} 页`,
+    }));
+  }
+
+  if (blogCurrentPage < totalPages) {
+    pagination.append(makeBlogPageButton('较旧', blogCurrentPage + 1, {
+      wide: true,
+      label: '较旧文章',
+      html: '<span>较旧</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>',
+    }));
+  }
+}
+
+function filterPosts({ resetPage = true } = {}) {
+  const grid = document.getElementById('posts-grid');
+  if (!grid) return;
+
+  const pagination = document.querySelector('.blog-pagination');
+  const cards = [...(typeof grid.querySelectorAll === 'function'
+    ? grid.querySelectorAll('.post-card')
+    : document.querySelectorAll('#posts-grid .post-card'))];
+  const filters = getActiveBlogFilters();
+  const matches = cards.filter(card => postMatchesBlogFilters(card, filters));
+
+  if (resetPage) blogCurrentPage = 1;
+
+  if (!pagination) {
+    cards.forEach(card => {
+      card.hidden = !matches.includes(card);
+    });
+    return;
+  }
+
+  const pageSize = getBlogPageSize(grid, pagination, cards.length);
+  const totalPages = matches.length === 0 ? 1 : Math.ceil(matches.length / pageSize);
+  blogCurrentPage = Math.min(Math.max(blogCurrentPage, 1), totalPages);
+
+  const start = (blogCurrentPage - 1) * pageSize;
+  const pageMatches = new Set(matches.slice(start, start + pageSize));
+  cards.forEach(card => {
+    card.hidden = !pageMatches.has(card);
+  });
+
+  renderBlogPagination(pagination, matches.length > pageSize ? totalPages : 0);
 }
 
 function initBlogControls() {
@@ -327,8 +720,8 @@ function initBlogControls() {
   const searchInput = document.getElementById('blog-search');
   if (searchInput) {
     // 'input' fires on every keystroke; 'search' fires on native × clear button
-    searchInput.addEventListener('input', filterPosts);
-    searchInput.addEventListener('search', filterPosts);
+    searchInput.addEventListener('input', () => filterPosts());
+    searchInput.addEventListener('search', () => filterPosts());
   }
 
   document.querySelectorAll('.filter-toggle').forEach(toggle => {
@@ -348,6 +741,8 @@ function initBlogControls() {
       filterPosts();
     });
   });
+
+  filterPosts();
 }
 
 /* ── Image blur-up on load ───────────────────────────────────────── */

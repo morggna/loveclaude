@@ -639,6 +639,7 @@ a.post-category:hover {
   gap: 6px;
   padding-block: 60px;
 }
+.pagination[hidden] { display: none; }
 
 .page-link {
   min-width: 40px;
@@ -654,6 +655,8 @@ a.post-category:hover {
   color: var(--text-2);
   transition: all var(--t);
   padding-inline: 10px;
+  background: transparent;
+  cursor: pointer;
 }
 .page-link:hover, .page-link.active {
   border-color: var(--accent);

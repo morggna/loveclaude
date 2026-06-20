@@ -91,14 +91,15 @@
         </div>
       </div>
 
-      {{ $paginator := .Paginate .Pages }}
-      {{ if $paginator.Pages -}}
-      <div class="posts-grid posts-grid--blog" id="posts-grid">
-        {{ range $paginator.Pages -}}
+      {{ $pages := .Pages }}
+      {{ $pageSize := site.Params.postsPageSize | default 6 }}
+      {{ if $pages -}}
+      <div class="posts-grid posts-grid--blog" id="posts-grid" data-page-size="{{ $pageSize }}">
+        {{ range $pages -}}
           {{- partial "post-card.html" . -}}
         {{- end }}
       </div>
-      {{- partial "pagination.html" $paginator -}}
+      <nav class="pagination blog-pagination" data-page-size="{{ $pageSize }}" aria-label="文章分页" hidden></nav>
       {{- else -}}
       <div class="empty-state"><p>暂无文章。</p></div>
       {{- end }}
