@@ -4543,6 +4543,10 @@ a.footer-badge:hover {
 
 @media (max-width: 760px),
   ((hover: none) and (pointer: coarse) and (max-width: 1024px)) {
+  #hero-canvas {
+    display: none;
+  }
+
   .hero {
     align-items: flex-start;
     min-height: 100lvh;

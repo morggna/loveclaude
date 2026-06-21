@@ -261,6 +261,12 @@ class Particles {
   }
 }
 
+function shouldRunHeroParticles() {
+  const phone = window.matchMedia('(max-width: 760px)');
+  const touchTablet = window.matchMedia('((hover: none) and (pointer: coarse) and (max-width: 1024px))');
+  return !phone.matches && !touchTablet.matches;
+}
+
 /* ── Mobile menu ─────────────────────────────────────────────────── */
 function initMobileMenu() {
   const toggle = document.getElementById('mobile-menu-toggle');
@@ -762,7 +768,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const canvas = document.getElementById('hero-canvas');
-  if (canvas) new Particles(canvas);
+  if (canvas && shouldRunHeroParticles()) new Particles(canvas);
 
   initMobileMenu();
   initScrollTop();
