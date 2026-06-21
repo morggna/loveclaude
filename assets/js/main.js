@@ -144,129 +144,6 @@ function initLanguageSwitcher() {
   setLanguageUI(pageLanguageFromDocument());
 }
 
-/* ── Particle canvas animation ───────────────────────────────────── */
-class Particles {
-  constructor(canvas) {
-    this.c = canvas;
-    this.x = canvas.getContext('2d');
-    this.pts = [];
-    this.mouse = { x: -9999, y: -9999 };
-    this._raf = null;
-    this._resize();
-    this._spawn();
-    this._events();
-    this._tick();
-  }
-
-  _resize() {
-    const r = this.c.getBoundingClientRect();
-    this.c.width  = r.width;
-    this.c.height = r.height;
-    this.W = r.width;
-    this.H = r.height;
-  }
-
-  _spawn() {
-    const n = Math.min(100, Math.floor((this.W * this.H) / 9000));
-    this.pts = Array.from({ length: n }, () => ({
-      x:  Math.random() * this.W,
-      y:  Math.random() * this.H,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
-      r:  Math.random() * 1.4 + 0.4,
-      a:  Math.random() * 0.55 + 0.15,
-    }));
-  }
-
-  _events() {
-    const onResize = () => { this._resize(); this._spawn(); };
-    window.addEventListener('resize', onResize, { passive: true });
-
-    this.c.addEventListener('mousemove', e => {
-      const r = this.c.getBoundingClientRect();
-      this.mouse.x = e.clientX - r.left;
-      this.mouse.y = e.clientY - r.top;
-    }, { passive: true });
-
-    this.c.addEventListener('mouseleave', () => {
-      this.mouse.x = -9999;
-      this.mouse.y = -9999;
-    }, { passive: true });
-  }
-
-  _color() {
-    return document.documentElement.getAttribute('data-theme') === 'light'
-      ? '143, 90, 53'
-      : '216, 137, 95';
-  }
-
-  _tick() {
-    const { x: ctx, W, H, pts, mouse } = this;
-    const CON = 130;
-    const MR  = 140;
-    const col = this._color();
-
-    ctx.clearRect(0, 0, W, H);
-
-    for (let i = 0; i < pts.length; i++) {
-      const p = pts[i];
-
-      // Mouse repulsion
-      const dx = p.x - mouse.x;
-      const dy = p.y - mouse.y;
-      const d  = Math.hypot(dx, dy);
-      if (d < MR && d > 0) {
-        const f = ((MR - d) / MR) * 0.28;
-        p.vx += (dx / d) * f;
-        p.vy += (dy / d) * f;
-      }
-
-      p.vx *= 0.985;
-      p.vy *= 0.985;
-      p.x  += p.vx;
-      p.y  += p.vy;
-
-      // Wrap edges
-      if (p.x < 0) p.x = W;
-      if (p.x > W) p.x = 0;
-      if (p.y < 0) p.y = H;
-      if (p.y > H) p.y = 0;
-
-      // Draw particle
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${col},${p.a})`;
-      ctx.fill();
-
-      // Connect nearby particles
-      for (let j = i + 1; j < pts.length; j++) {
-        const q  = pts[j];
-        const dd = Math.hypot(p.x - q.x, p.y - q.y);
-        if (dd < CON) {
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(${col},${(1 - dd / CON) * 0.12})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-      }
-    }
-
-    this._raf = requestAnimationFrame(() => this._tick());
-  }
-
-  destroy() {
-    if (this._raf) cancelAnimationFrame(this._raf);
-  }
-}
-
-function shouldRunHeroParticles() {
-  const phone = window.matchMedia('(max-width: 760px)');
-  const touchTablet = window.matchMedia('((hover: none) and (pointer: coarse) and (max-width: 1024px))');
-  return !phone.matches && !touchTablet.matches;
-}
-
 /* ── Mobile menu ─────────────────────────────────────────────────── */
 function initMobileMenu() {
   const toggle = document.getElementById('mobile-menu-toggle');
@@ -766,9 +643,6 @@ document.addEventListener('DOMContentLoaded', () => {
       applyTheme(cur === 'dark' ? 'light' : 'dark');
     });
   }
-
-  const canvas = document.getElementById('hero-canvas');
-  if (canvas && shouldRunHeroParticles()) new Particles(canvas);
 
   initMobileMenu();
   initScrollTop();
