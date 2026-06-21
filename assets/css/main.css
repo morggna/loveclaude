@@ -4959,18 +4959,18 @@ a.footer-badge:hover {
 .about-typing-banner {
   color: var(--about-typing-color, var(--accent-l));
   font-family: var(--f-body);
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: 2rem;
+  line-height: 1.375;
   margin: 0;
-  max-width: min(400px, 100%);
+  max-width: min(420px, 100%);
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
 }
 
 .about-typing-banner--hero {
-  flex: 0 1 auto;
-  max-width: min(360px, 100%);
+  flex: 0 1 420px;
+  max-width: min(420px, 100%);
   min-width: 0;
   transform: none;
 }
@@ -5048,9 +5048,8 @@ a.footer-badge:hover {
   }
 
   .about-hero-line {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: clamp(8px, 2.8vw, 12px);
-    row-gap: 2px;
     width: 100%;
   }
 
@@ -5111,15 +5110,16 @@ a.footer-badge:hover {
   }
 
   .about-typing-banner {
-    font-size: 0.92rem;
+    font-size: clamp(1.04rem, 4.95vw, 1.16rem);
     line-height: 1.65;
   }
 
   .about-typing-banner--hero {
-    flex: 0 1 100%;
-    font-size: 0.92rem;
+    flex: 1 1 0;
+    font-size: clamp(1.04rem, 4.95vw, 1.16rem);
     line-height: 1.65;
-    max-width: 100%;
+    max-width: none;
+    min-width: 120px;
   }
 
   .about-profile-panel {
