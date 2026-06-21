@@ -196,8 +196,8 @@ class Particles {
 
   _color() {
     return document.documentElement.getAttribute('data-theme') === 'light'
-      ? '90, 60, 180'
-      : '160, 139, 250';
+      ? '143, 90, 53'
+      : '216, 137, 95';
   }
 
   _tick() {

@@ -4976,7 +4976,7 @@ a.footer-badge:hover {
 }
 
 .about-typing-text {
-  animation: aboutTypingReveal 5400ms linear infinite;
+  animation: aboutTypingReveal 5400ms linear forwards;
   color: inherit;
   display: inline-block;
   font-size: inherit;
